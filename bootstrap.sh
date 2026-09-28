@@ -12,4 +12,7 @@ sudo install -m 644 -o root -g grafana grafana/provisioning/dashboards/homelab.y
 sudo install -d /var/lib/grafana/dashboards
 sudo install -m 644 grafana/dashboards/*.json /var/lib/grafana/dashboards/
 
+sudo install -d /etc/grafana/provisioning/alerting
+sudo install -m 644 -o root -g grafana grafana/provisioning/alerting/homelab.yml /etc/grafana/provisioning/alerting/
+
 sudo systemctl restart prometheus prometheus-blackbox-exporter grafana-server

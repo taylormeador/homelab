@@ -1,0 +1,72 @@
+apiVersion: 1
+
+contactPoints:
+  - orgId: 1
+    name: email
+    receivers:
+      - uid: email-taylor
+        type: email
+        settings:
+          addresses: taylor.r.meador@gmail.com
+
+policies:
+  - orgId: 1
+    receiver: email
+    group_by: ['alertname']
+    repeat_interval: 12h
+
+groups:
+  - orgId: 1
+    name: homelab
+    folder: Homelab
+    interval: 1m
+    rules:
+      - uid: backup-stale
+        title: Backup stale
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange: { from: 600, to: 0 }
+            datasourceUid: prometheus
+            model:
+              refId: A
+              expr: (time() - backup_last_success_timestamp_seconds) / 3600
+              instant: true
+          - refId: C
+            datasourceUid: __expr__
+            model:
+              refId: C
+              type: threshold
+              expression: A
+              conditions:
+                - evaluator: { type: gt, params: [26] }
+        for: 5m
+        noDataState: Alerting
+        execErrState: Alerting
+        annotations:
+          summary: 'Backup {{ $labels.exported_job }} has not succeeded in over 26 hours'
+
+      - uid: host-down
+        title: Host down
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange: { from: 600, to: 0 }
+            datasourceUid: prometheus
+            model:
+              refId: A
+              expr: up{job="node"}
+              instant: true
+          - refId: C
+            datasourceUid: __expr__
+            model:
+              refId: C
+              type: threshold
+              expression: A
+              conditions:
+                - evaluator: { type: lt, params: [1] }
+        for: 5m
+        noDataState: Alerting
+        execErrState: Alerting
+        annotations:
+          summary: 'Host {{ $labels.host }} is down'
