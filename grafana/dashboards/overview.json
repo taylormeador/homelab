@@ -1,0 +1,113 @@
+{
+  "title": "Overview",
+  "uid": "overview",
+  "schemaVersion": 39,
+  "time": { "from": "now-6h", "to": "now" },
+  "refresh": "1m",
+  "panels": [
+    {
+      "id": 1,
+      "type": "stat",
+      "title": "Hosts",
+      "gridPos": { "x": 0, "y": 0, "w": 12, "h": 6 },
+      "targets": [
+        { "refId": "A", "expr": "up{job=\"node\"}", "legendFormat": "{{host}}", "instant": true }
+      ],
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "colorMode": "background",
+        "textMode": "value_and_name"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [
+            { "type": "value", "options": {
+              "0": { "text": "DOWN", "color": "red" },
+              "1": { "text": "UP", "color": "green" } } }
+          ],
+          "thresholds": { "mode": "absolute", "steps": [
+            { "color": "red", "value": null },
+            { "color": "green", "value": 1 } ] }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 2,
+      "type": "stat",
+      "title": "Services",
+      "gridPos": { "x": 12, "y": 0, "w": 12, "h": 6 },
+      "targets": [
+        { "refId": "A", "expr": "probe_success", "legendFormat": "{{service}}", "instant": true }
+      ],
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "colorMode": "background",
+        "textMode": "value_and_name"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [
+            { "type": "value", "options": {
+              "0": { "text": "DOWN", "color": "red" },
+              "1": { "text": "UP", "color": "green" } } }
+          ],
+          "thresholds": { "mode": "absolute", "steps": [
+            { "color": "red", "value": null },
+            { "color": "green", "value": 1 } ] }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 3,
+      "type": "stat",
+      "title": "Backup age",
+      "gridPos": { "x": 0, "y": 6, "w": 12, "h": 6 },
+      "targets": [
+        { "refId": "A", "expr": "(time() - backup_last_success_timestamp_seconds) / 3600", "legendFormat": "{{exported_job}}", "instant": true }
+      ],
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "colorMode": "background",
+        "textMode": "value_and_name"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "h",
+          "decimals": 1,
+          "thresholds": { "mode": "absolute", "steps": [
+            { "color": "green", "value": null },
+            { "color": "red", "value": 26 } ] }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 4,
+      "type": "bargauge",
+      "title": "Disk usage (worst per host)",
+      "gridPos": { "x": 12, "y": 6, "w": 12, "h": 10 },
+      "targets": [
+        { "refId": "A", "expr": "max by (host) (100 * (1 - node_filesystem_avail_bytes{fstype!~\"tmpfs|overlay|squashfs\"} / node_filesystem_size_bytes))", "legendFormat": "{{host}}", "instant": true }
+      ],
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "orientation": "horizontal",
+        "displayMode": "gradient"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "min": 0,
+          "max": 100,
+          "thresholds": { "mode": "absolute", "steps": [
+            { "color": "green", "value": null },
+            { "color": "orange", "value": 80 },
+            { "color": "red", "value": 90 } ] }
+        },
+        "overrides": []
+      }
+    }
+  ]
+}

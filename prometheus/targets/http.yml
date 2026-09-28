@@ -1,0 +1,6 @@
+- targets: ['http://10.0.10.123:8096']
+  labels:
+    service: jellyfin
+- targets: ['http://10.0.10.114:8080']
+  labels:
+    service: qbittorrent

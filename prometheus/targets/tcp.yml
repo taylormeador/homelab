@@ -1,0 +1,3 @@
+- targets: ['10.0.10.121:5432']
+  labels:
+        service: postgres

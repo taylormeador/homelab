@@ -1,7 +1,49 @@
 global:
-    scrape_interval: 30s
+  scrape_interval: 30s
 
 scrape_configs:
-    - job_name: node
-      file_sd_configs:    
-        - files: ['/etc/prometheus/targets/*.yml']
+  - job_name: node
+    file_sd_configs:
+      - files: ['/etc/prometheus/targets/nodes.yml']
+
+  - job_name: blackbox_http
+    metrics_path: /probe
+    params:
+      module: [http_2xx]
+    file_sd_configs:
+      - files: ['/etc/prometheus/targets/http.yml']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: 127.0.0.1:9115
+
+  - job_name: blackbox_https
+    metrics_path: /probe
+    params:
+      module: [http_2xx_insecure]
+    file_sd_configs:
+      - files: ['/etc/prometheus/targets/https.yml']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: 127.0.0.1:9115
+
+  - job_name: blackbox_tcp
+    metrics_path: /probe
+    params:
+      module: [tcp_connect]
+    file_sd_configs:
+      - files: ['/etc/prometheus/targets/tcp.yml']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: 127.0.0.1:9115
