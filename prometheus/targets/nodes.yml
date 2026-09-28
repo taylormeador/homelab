@@ -2,6 +2,30 @@
   labels:
         host: monitoring-ct
 
+- targets: ['10.0.10.101:9100']
+  labels:
+        host: srv1
+
+- targets: ['10.0.10.102:9100']
+  labels:
+        host: srv2
+
 - targets: ['10.0.10.111:9100']
   labels:
         host: minecraft-ct
+
+- targets: ['10.0.10.123:9100']
+  labels:
+        host: services-vm
+
+- targets: ['10.0.10.113:9100']
+  labels:
+        host: pbs-vm
+
+- targets: ['10.0.10.114:9100']
+  labels:
+        host: torrent
+
+- targets: ['10.0.10.121:9100']
+  labels:
+        host: postgres-vm
