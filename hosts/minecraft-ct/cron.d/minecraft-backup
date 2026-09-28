@@ -1,0 +1,1 @@
+0 4 * * * root /usr/local/bin/backup-run minecraft-hunter2 /usr/local/bin/minecraft-backup hunter2
