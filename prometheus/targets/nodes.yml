@@ -1,7 +1,0 @@
-- targets: ['10.0.10.101:9100']
-  labels:
-        host: srv1
-
-- targets: ['10.0.10.102:9100']
-  labels:
-        host: srv2
