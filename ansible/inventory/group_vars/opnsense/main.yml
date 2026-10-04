@@ -1,0 +1,7 @@
+ansible_connection: local
+
+opnsense_api_host: 10.0.10.1
+opnsense_api_key: "{{ vault_opnsense_api_key }}"
+opnsense_api_secret: "{{ vault_opnsense_api_secret }}"
+opnsense_ssl_verify: false
+

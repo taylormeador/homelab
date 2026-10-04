@@ -1,0 +1,21 @@
+- name: Manage nginx reverse proxy
+  hosts: nginx-ct
+  become: true
+
+  vars:
+    nginx_sites:
+      - name: jellyfin
+        backend: "http://10.0.10.123:8096"
+      - name: qbittorrent
+        backend: "http://10.0.10.114:8080"
+      - name: grafana
+        backend: "http://10.0.10.129:3000"
+      - name: pve1
+        backend: "https://10.0.10.101:8006"
+      - name: pve2
+        backend: "https://10.0.10.102:8006"
+      - name: pbs
+        backend: "https://10.0.10.113:8007"
+
+  roles:
+    - nginx_proxy

@@ -1,0 +1,61 @@
+- name: Manage DNS host overrides
+  hosts: opnsense
+  gather_facts: false
+
+  vars:
+    dns_records:
+      #- hostname: srv1
+      #  ip: 10.0.10.101
+      - hostname: srv2
+        ip: 10.0.10.102
+      - hostname: dev-ct
+        ip: 10.0.10.110
+      - hostname: minecraft-ct
+        ip: 10.0.10.111
+      - hostname: pbs-vm
+        ip: 10.0.10.113
+      - hostname: torrent
+        ip: 10.0.10.114
+      - hostname: nginx-ct
+        ip: 10.0.10.120
+      - hostname: postgres-vm
+        ip: 10.0.10.121
+      - hostname: services-vm
+        ip: 10.0.10.123
+      - hostname: monitoring-ct
+        ip: 10.0.10.129
+      # Service names (resolve to nginx reverse proxy)
+      - hostname: jellyfin
+        ip: 10.0.10.120
+      - hostname: qbittorrent
+        ip: 10.0.10.120
+      - hostname: grafana
+        ip: 10.0.10.120
+      - hostname: pve2
+        ip: 10.0.10.120
+      - hostname: pbs
+        ip: 10.0.10.120
+      # Role names (resolve to the serving host)
+      - hostname: nfs
+        ip: 10.0.10.102
+      - hostname: db
+        ip: 10.0.10.121
+
+  tasks:
+    - name: Create DNS host overrides
+      ansibleguy.opnsense.unbound_host:
+        hostname: "{{ item.hostname }}"
+        domain: "{{ dns_domain }}"
+        value: "{{ item.ip }}"
+        description: "Managed by Ansible"
+        firewall: "{{ opnsense_api_host }}"
+        api_key: "{{ opnsense_api_key }}"
+        api_secret: "{{ opnsense_api_secret }}"
+        ssl_verify: "{{ opnsense_ssl_verify }}"
+        match_fields:
+          - hostname
+          - domain
+          - record_type
+      loop: "{{ dns_records }}"
+      loop_control:
+        label: "{{ item.hostname }}.{{ dns_domain }} -> {{ item.ip }}"
