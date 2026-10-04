@@ -1,0 +1,20 @@
+- name: Remove old-style Grafana apt config
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - /etc/apt/sources.list.d/grafana.list
+    - /etc/apt/sources.list.d/grafana.sources
+
+- name: Remove old Grafana apt key
+  ansible.builtin.file:
+    path: /etc/apt/keyrings/grafana.gpg
+    state: absent
+
+- name: Add Grafana apt repository
+  ansible.builtin.deb822_repository:
+    name: grafana
+    uris: https://apt.grafana.com
+    suites: stable
+    components: main
+    signed_by: https://apt.grafana.com/gpg-full.key

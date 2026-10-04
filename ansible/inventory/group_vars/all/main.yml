@@ -1,1 +1,3 @@
 dns_domain: lab.taylor-meador.com
+prometheus_host: monitoring-ct.lab.taylor-meador.com
+loki_host: monitoring-ct.lab.taylor-meador.com

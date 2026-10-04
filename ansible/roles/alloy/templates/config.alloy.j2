@@ -1,0 +1,41 @@
+// Node metrics (replaces node-exporter)
+prometheus.exporter.unix "node" { }
+
+prometheus.scrape "node" {
+  targets         = prometheus.exporter.unix.node.targets
+  forward_to      = [prometheus.remote_write.default.receiver]
+  scrape_interval = "30s"
+}
+
+prometheus.remote_write "default" {
+  external_labels = {
+    host = "{{ inventory_hostname }}",
+  }
+
+  endpoint {
+    url = "http://{{ prometheus_host }}:9090/api/v1/write"
+  }
+}
+
+// Journal logs
+loki.source.journal "system" {
+  forward_to = [loki.relabel.journal.receiver]
+  labels     = {
+    host = "{{ inventory_hostname }}",
+  }
+}
+
+loki.relabel "journal" {
+  forward_to = [loki.write.default.receiver]
+
+  rule {
+    source_labels = ["__journal__systemd_unit"]
+    target_label  = "unit"
+  }
+}
+
+loki.write "default" {
+  endpoint {
+    url = "http://{{ loki_host }}:3100/loki/api/v1/push"
+  }
+}

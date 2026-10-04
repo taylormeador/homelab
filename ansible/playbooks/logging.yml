@@ -1,0 +1,12 @@
+- name: Set up Loki and Prometheus remote write on monitoring-ct
+  hosts: monitoring-ct
+  become: true
+  roles:
+    - loki
+    - monitoring
+
+- name: Deploy Alloy to all nodes
+  hosts: containers:vms
+  become: true
+  roles:
+    - alloy

@@ -1,0 +1,32 @@
+- name: Set up Grafana apt repo
+  ansible.builtin.include_role:
+    name: grafana_repo
+
+- name: Install Loki
+  ansible.builtin.apt:
+    name: loki
+    state: present
+    update_cache: true
+
+- name: Create Loki data directory
+  ansible.builtin.file:
+    path: /var/lib/loki
+    state: directory
+    owner: loki
+    group: root
+    mode: "0755"
+
+- name: Deploy Loki config
+  ansible.builtin.template:
+    src: loki-config.yml.j2
+    dest: /etc/loki/config.yml
+    owner: loki
+    group: root
+    mode: "0644"
+  notify: restart loki
+
+- name: Enable and start Loki
+  ansible.builtin.service:
+    name: loki
+    state: started
+    enabled: true

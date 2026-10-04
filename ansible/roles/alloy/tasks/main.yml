@@ -1,0 +1,38 @@
+- name: Set up Grafana apt repo
+  ansible.builtin.include_role:
+    name: grafana_repo
+
+- name: Install Alloy
+  ansible.builtin.apt:
+    name: alloy
+    state: present
+    update_cache: true
+
+- name: Deploy Alloy config
+  ansible.builtin.template:
+    src: config.alloy.j2
+    dest: /etc/alloy/config.alloy
+    owner: alloy
+    group: alloy
+    mode: "0644"
+  notify: restart alloy
+
+- name: Add alloy user to systemd-journal group
+  ansible.builtin.user:
+    name: alloy
+    groups: systemd-journal
+    append: true
+  notify: restart alloy
+
+- name: Stop and disable node-exporter
+  ansible.builtin.service:
+    name: prometheus-node-exporter
+    state: stopped
+    enabled: false
+  ignore_errors: true
+
+- name: Enable and start Alloy
+  ansible.builtin.service:
+    name: alloy
+    state: started
+    enabled: true

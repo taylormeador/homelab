@@ -1,0 +1,26 @@
+- name: Enable Prometheus remote write receiver
+  ansible.builtin.lineinfile:
+    path: /etc/default/prometheus
+    regexp: '^ARGS='
+    line: 'ARGS="--web.enable-remote-write-receiver"'
+    create: true
+    owner: root
+    group: root
+    mode: "0644"
+  notify: restart prometheus
+
+- name: Deploy Loki datasource for Grafana
+  ansible.builtin.copy:
+    dest: /etc/grafana/provisioning/datasources/loki.yml
+    owner: root
+    group: grafana
+    mode: "0644"
+    content: |
+      apiVersion: 1
+      datasources:
+        - name: Loki
+          uid: loki
+          type: loki
+          access: proxy
+          url: http://127.0.0.1:3100
+  notify: restart grafana
