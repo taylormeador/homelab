@@ -3,6 +3,11 @@
     name: prometheus
     state: restarted
 
+- name: restart blackbox
+  ansible.builtin.service:
+    name: prometheus-blackbox-exporter
+    state: restarted
+
 - name: restart grafana
   ansible.builtin.service:
     name: grafana-server

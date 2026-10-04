@@ -1,3 +1,40 @@
+# --- Prometheus ---
+
+- name: Deploy Prometheus config
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/../../prometheus/prometheus.yml"
+    dest: /etc/prometheus/prometheus.yml
+    owner: root
+    group: root
+    mode: "0644"
+  notify: restart prometheus
+
+- name: Deploy blackbox exporter config
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/../../prometheus/blackbox.yml"
+    dest: /etc/prometheus/blackbox.yml
+    owner: root
+    group: root
+    mode: "0644"
+  notify: restart blackbox
+
+- name: Create Prometheus targets directory
+  ansible.builtin.file:
+    path: /etc/prometheus/targets
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Deploy Prometheus target files
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: /etc/prometheus/targets/
+    owner: root
+    group: root
+    mode: "0644"
+  with_fileglob: "{{ playbook_dir }}/../../prometheus/targets/*.yml"
+
 - name: Enable Prometheus remote write receiver
   ansible.builtin.lineinfile:
     path: /etc/default/prometheus
@@ -8,6 +45,18 @@
     group: root
     mode: "0644"
   notify: restart prometheus
+
+# --- Grafana ---
+
+- name: Deploy Grafana datasources
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: /etc/grafana/provisioning/datasources/
+    owner: root
+    group: grafana
+    mode: "0644"
+  with_fileglob: "{{ playbook_dir }}/../../grafana/provisioning/datasources/*.yml"
+  notify: restart grafana
 
 - name: Deploy Loki datasource for Grafana
   ansible.builtin.copy:
@@ -23,4 +72,42 @@
           type: loki
           access: proxy
           url: http://127.0.0.1:3100
+  notify: restart grafana
+
+- name: Deploy Grafana dashboard provisioner
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: /etc/grafana/provisioning/dashboards/
+    owner: root
+    group: grafana
+    mode: "0644"
+  with_fileglob: "{{ playbook_dir }}/../../grafana/provisioning/dashboards/*.yml"
+  notify: restart grafana
+
+- name: Create Grafana dashboards directory
+  ansible.builtin.file:
+    path: /var/lib/grafana/dashboards
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Deploy Grafana dashboards
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: /var/lib/grafana/dashboards/
+    owner: root
+    group: root
+    mode: "0644"
+  with_fileglob: "{{ playbook_dir }}/../../grafana/dashboards/*.json"
+  notify: restart grafana
+
+- name: Deploy Grafana alerting config
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: /etc/grafana/provisioning/alerting/
+    owner: root
+    group: grafana
+    mode: "0644"
+  with_fileglob: "{{ playbook_dir }}/../../grafana/provisioning/alerting/*.yml"
   notify: restart grafana

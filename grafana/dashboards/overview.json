@@ -11,7 +11,7 @@
       "title": "Hosts",
       "gridPos": { "x": 0, "y": 0, "w": 12, "h": 6 },
       "targets": [
-        { "refId": "A", "expr": "up{job=\"node\"}", "legendFormat": "{{host}}", "instant": true }
+        { "refId": "A", "expr": "up{job=\"integrations/unix\"}", "legendFormat": "{{host}}", "instant": true }
       ],
       "options": {
         "reduceOptions": { "calcs": ["lastNotNull"] },
@@ -89,7 +89,7 @@
       "title": "Disk usage (worst per host)",
       "gridPos": { "x": 12, "y": 6, "w": 12, "h": 10 },
       "targets": [
-        { "refId": "A", "expr": "max by (host) (100 * (1 - node_filesystem_avail_bytes{fstype!~\"tmpfs|overlay|squashfs\"} / node_filesystem_size_bytes))", "legendFormat": "{{host}}", "instant": true }
+        { "refId": "A", "expr": "max by (host) (100 * (1 - node_filesystem_avail_bytes{job=\"integrations/unix\", fstype!~\"tmpfs|overlay|squashfs\"} / node_filesystem_size_bytes{job=\"integrations/unix\"}))", "legendFormat": "{{host}}", "instant": true }
       ],
       "options": {
         "reduceOptions": { "calcs": ["lastNotNull"] },
