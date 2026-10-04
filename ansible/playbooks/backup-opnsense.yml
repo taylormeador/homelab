@@ -1,0 +1,38 @@
+- name: Backup OPNsense configuration
+  hosts: opnsense
+  gather_facts: false
+
+  vars:
+    backup_dirs:
+      - /mnt/hdd-2tb/opnsense
+      - /mnt/hdd-3tb/opnsense
+      - /mnt/hdd-6tb/opnsense
+    backup_filename: "opnsense-{{ lookup('pipe', 'date +%Y-%m-%d') }}.xml"
+
+  tasks:
+    - name: Ensure backup directories exist
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        mode: "0750"
+      loop: "{{ backup_dirs }}"
+      delegate_to: localhost
+
+    - name: Download OPNsense config
+      ansible.builtin.uri:
+        url: "https://{{ opnsense_api_host }}/api/core/backup/download/this"
+        url_username: "{{ opnsense_api_key }}"
+        url_password: "{{ opnsense_api_secret }}"
+        validate_certs: false
+        force_basic_auth: true
+        return_content: true
+        dest: "{{ backup_dirs[0] }}/{{ backup_filename }}"
+      delegate_to: localhost
+
+    - name: Copy backup to other drives
+      ansible.builtin.copy:
+        src: "{{ backup_dirs[0] }}/{{ backup_filename }}"
+        dest: "{{ item }}/{{ backup_filename }}"
+        mode: "0640"
+      loop: "{{ backup_dirs[1:] }}"
+      delegate_to: localhost
