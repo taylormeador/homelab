@@ -60,34 +60,10 @@
       }
     },
     {
-      "id": 3,
-      "type": "stat",
-      "title": "Backup age",
-      "gridPos": { "x": 0, "y": 6, "w": 12, "h": 6 },
-      "targets": [
-        { "refId": "A", "expr": "(time() - backup_last_success_timestamp_seconds) / 3600", "legendFormat": "{{exported_job}}", "instant": true }
-      ],
-      "options": {
-        "reduceOptions": { "calcs": ["lastNotNull"] },
-        "colorMode": "background",
-        "textMode": "value_and_name"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "h",
-          "decimals": 1,
-          "thresholds": { "mode": "absolute", "steps": [
-            { "color": "green", "value": null },
-            { "color": "red", "value": 26 } ] }
-        },
-        "overrides": []
-      }
-    },
-    {
       "id": 4,
       "type": "bargauge",
       "title": "Disk usage (worst per host)",
-      "gridPos": { "x": 12, "y": 6, "w": 12, "h": 10 },
+      "gridPos": { "x": 0, "y": 6, "w": 24, "h": 10 },
       "targets": [
         { "refId": "A", "expr": "max by (host) (100 * (1 - node_filesystem_avail_bytes{job=\"integrations/unix\", fstype!~\"tmpfs|overlay|squashfs\"} / node_filesystem_size_bytes{job=\"integrations/unix\"}))", "legendFormat": "{{host}}", "instant": true }
       ],

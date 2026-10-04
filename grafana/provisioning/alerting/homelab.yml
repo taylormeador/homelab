@@ -21,31 +21,6 @@ groups:
     folder: Homelab
     interval: 1m
     rules:
-      - uid: backup-stale
-        title: Backup stale
-        condition: C
-        data:
-          - refId: A
-            relativeTimeRange: { from: 600, to: 0 }
-            datasourceUid: prometheus
-            model:
-              refId: A
-              expr: (time() - backup_last_success_timestamp_seconds) / 3600
-              instant: true
-          - refId: C
-            datasourceUid: __expr__
-            model:
-              refId: C
-              type: threshold
-              expression: A
-              conditions:
-                - evaluator: { type: gt, params: [26] }
-        for: 5m
-        noDataState: Alerting
-        execErrState: Alerting
-        annotations:
-          summary: 'Backup {{ $labels.exported_job }} has not succeeded in over 26 hours'
-
       - uid: host-down
         title: Host down
         condition: C
@@ -55,7 +30,7 @@ groups:
             datasourceUid: prometheus
             model:
               refId: A
-              expr: up{job="node"}
+              expr: up{job="integrations/unix"}
               instant: true
           - refId: C
             datasourceUid: __expr__
