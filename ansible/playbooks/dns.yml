@@ -4,8 +4,8 @@
 
   vars:
     dns_records:
-      #- hostname: srv1
-      #  ip: 10.0.10.101
+      - hostname: srv1
+        ip: 10.0.10.101
       - hostname: srv2
         ip: 10.0.10.102
       - hostname: dev-ct
@@ -30,6 +30,8 @@
       - hostname: qbittorrent
         ip: 10.0.10.120
       - hostname: grafana
+        ip: 10.0.10.120
+      - hostname: pve1
         ip: 10.0.10.120
       - hostname: pve2
         ip: 10.0.10.120

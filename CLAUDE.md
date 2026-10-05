@@ -21,13 +21,15 @@ Key playbooks:
 - `nginx.yml` — Reverse proxy configs on nginx-ct
 - `backup-opnsense.yml` — OPNsense config backup
 
-Infrastructure provisioning:
+Infrastructure provisioning (per-host directories):
 
 ```bash
-cd tofu
-tofu plan    # review changes
-tofu apply   # apply changes
+cd tofu/srv1   # or tofu/srv2
+tofu plan      # review changes
+tofu apply     # apply changes
 ```
+
+Each host has its own `.env` with API credentials, loaded automatically by direnv.
 
 ## Architecture
 

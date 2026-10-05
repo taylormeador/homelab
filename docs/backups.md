@@ -18,6 +18,12 @@ sudo backup-footage
 sudo backup-jellyfin
 ```
 
+To send output to the journal (and therefore Loki/Grafana) instead of the terminal:
+
+```bash
+sudo backup-footage 2>&1 | logger -t backup-footage
+```
+
 ## Adding a new job
 
 Add an entry to `backup_jobs` in `ansible/playbooks/backups.yml`:
