@@ -16,7 +16,7 @@ provider "proxmox" {
 resource "proxmox_virtual_environment_container" "dev_ct" {
   node_name     = "srv2"
   vm_id         = 110
-  unprivileged  = true
+  unprivileged  = false
   start_on_boot = false
 
   console {
@@ -256,6 +256,50 @@ resource "proxmox_virtual_environment_container" "monitoring_ct" {
 }
 
 # --- Virtual Machines ---
+
+resource "proxmox_virtual_environment_vm" "nobara_vm" {
+  node_name     = "srv2"
+  vm_id         = 115
+  name          = "nobara-vm"
+  scsi_hardware = "virtio-scsi-single"
+  on_boot       = false
+
+  agent {
+    enabled = true
+    timeout = "15m"
+    type    = "virtio"
+  }
+
+  cpu {
+    cores   = 2
+    sockets = 1
+    type    = "x86-64-v2-AES"
+  }
+
+  memory {
+    dedicated = 8192
+  }
+
+  disk {
+    datastore_id = "local-lvm"
+    interface    = "scsi0"
+    size         = 32
+    file_format  = "raw"
+  }
+
+  cdrom {
+    file_id   = "local:iso/Nobara-44-Official-2026-09-02.iso"
+    interface = "ide2"
+  }
+
+  network_device {
+    bridge = "vmbr10"
+  }
+
+  operating_system {
+    type = "l26"
+  }
+}
 
 resource "proxmox_virtual_environment_vm" "pbs_vm" {
   node_name     = "srv2"
