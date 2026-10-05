@@ -1,0 +1,9 @@
+#!/bin/bash
+set -euo pipefail
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') Starting backup: {{ item.name }}"
+echo "  {{ item.src }} -> {{ item.dest }}"
+
+rsync -ah --delete --stats {{ item.src }} {{ item.dest }}
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') Backup complete: {{ item.name }}"

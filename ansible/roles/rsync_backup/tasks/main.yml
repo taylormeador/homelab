@@ -1,0 +1,35 @@
+- name: Install rsync
+  ansible.builtin.apt:
+    name: rsync
+    state: present
+
+- name: Create backup destination directories
+  ansible.builtin.file:
+    path: "{{ item.dest }}"
+    state: directory
+    mode: "0755"
+  loop: "{{ backup_jobs }}"
+  loop_control:
+    label: "{{ item.name }}"
+
+- name: Deploy backup scripts
+  ansible.builtin.template:
+    src: backup-script.sh.j2
+    dest: "/usr/local/bin/backup-{{ item.name }}"
+    owner: root
+    group: root
+    mode: "0755"
+  loop: "{{ backup_jobs }}"
+  loop_control:
+    label: "{{ item.name }}"
+
+- name: Deploy backup cron jobs
+  ansible.builtin.template:
+    src: backup-cron.j2
+    dest: "/etc/cron.d/backup-{{ item.name }}"
+    owner: root
+    group: root
+    mode: "0644"
+  loop: "{{ backup_jobs }}"
+  loop_control:
+    label: "{{ item.name }}"

@@ -1,0 +1,17 @@
+- name: Configure backup jobs
+  hosts: dev-ct
+  become: true
+
+  vars:
+    backup_jobs:
+      - name: footage
+        src: /mnt/hdd-6tb/footage/
+        dest: /mnt/hdd-3tb/footage/
+        schedule: "0 3 * * *"
+      - name: jellyfin
+        src: /mnt/hdd-3tb/jellyfin/
+        dest: /mnt/hdd-6tb/jellyfin/
+        schedule: "0 4 * * *"
+
+  roles:
+    - rsync_backup
