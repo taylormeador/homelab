@@ -37,7 +37,7 @@ resource "proxmox_virtual_environment_container" "dev_ct" {
 
   disk {
     datastore_id = "local-lvm"
-    size         = 32
+    size         = 48
   }
 
   features {
@@ -53,6 +53,24 @@ resource "proxmox_virtual_environment_container" "dev_ct" {
         gateway = "10.0.10.1"
       }
     }
+  }
+
+  mount_point {
+    path   = "/mnt/hdd-2tb"
+    volume = "/mnt/hdd-2tb"
+    backup = false
+  }
+
+  mount_point {
+    path   = "/mnt/hdd-3tb"
+    volume = "/mnt/hdd-3tb"
+    backup = false
+  }
+
+  mount_point {
+    path   = "/mnt/hdd-6tb"
+    volume = "/mnt/hdd-6tb"
+    backup = false
   }
 
   network_interface {
@@ -203,7 +221,7 @@ resource "proxmox_virtual_environment_container" "monitoring_ct" {
 
   disk {
     datastore_id = "local-lvm"
-    size         = 8
+    size         = 16
   }
 
   features {
