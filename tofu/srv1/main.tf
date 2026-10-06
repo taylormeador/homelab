@@ -54,6 +54,12 @@ resource "proxmox_virtual_environment_container" "jellyfin_ct" {
     }
   }
 
+  mount_point {
+    path   = "/media"
+    volume = "/mnt/hdd-3tb/jellyfin/data"
+    backup = false
+  }
+
   network_interface {
     name     = "eth0"
     bridge   = "vmbr0"
