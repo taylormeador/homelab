@@ -6,7 +6,7 @@
     - monitoring
 
 - name: Deploy Alloy to all nodes
-  hosts: hypervisors:containers:vms
+  hosts: hypervisors:containers:vms:!bazzite-vm
   become: true
   roles:
     - alloy

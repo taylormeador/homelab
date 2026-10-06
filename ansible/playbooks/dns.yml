@@ -22,6 +22,8 @@
         ip: 10.0.10.121
       - hostname: jellyfin-ct
         ip: 10.0.10.123
+      - hostname: bazzite-vm
+        ip: 10.0.10.116
       - hostname: monitoring-ct
         ip: 10.0.10.129
       # Service names (resolve to nginx reverse proxy)
