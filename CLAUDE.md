@@ -35,7 +35,7 @@ Each host has its own `.env` with API credentials, loaded automatically by diren
 
 **Monitoring pipeline:** Grafana Alloy runs on all Linux hosts, pushing node metrics to Prometheus via remote_write and journal logs to Loki. Prometheus also scrapes blackbox-exporter for HTTP/HTTPS/TCP probes. Grafana reads from Prometheus and Loki, rendering dashboards provisioned from JSON files.
 
-**Hosts:** srv1/srv2 are Proxmox hypervisors (srv1 currently offline). pve1/pve2 are service aliases for Proxmox web UIs through the nginx reverse proxy. OPNsense router uses a community Prometheus exporter (FreeBSD, can't run Alloy).
+**Hosts:** srv1/srv2 are Proxmox hypervisors. pve1/pve2 are service aliases for Proxmox web UIs through the nginx reverse proxy. OPNsense router uses a community Prometheus exporter (FreeBSD, can't run Alloy).
 
 ## Key Conventions
 
