@@ -20,7 +20,7 @@
         ip: 10.0.10.120
       - hostname: postgres-vm
         ip: 10.0.10.121
-      - hostname: services-vm
+      - hostname: jellyfin-ct
         ip: 10.0.10.123
       - hostname: monitoring-ct
         ip: 10.0.10.129

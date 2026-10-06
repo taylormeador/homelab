@@ -1,0 +1,5 @@
+- name: Deploy Jellyfin
+  hosts: jellyfin-ct
+  become: true
+  roles:
+    - jellyfin
