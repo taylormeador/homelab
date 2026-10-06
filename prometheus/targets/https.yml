@@ -1,9 +1,9 @@
-- targets: ['https://10.0.10.101:8006']
+- targets: ['https://srv1.lab.taylor-meador.com:8006']
   labels:
-        service: pve-srv1
-- targets: ['https://10.0.10.102:8006']
+    service: pve-srv1
+- targets: ['https://srv2.lab.taylor-meador.com:8006']
   labels:
-        service: pve-srv2
-- targets: ['https://10.0.10.113:8007']
+    service: pve-srv2
+- targets: ['https://pbs-vm.lab.taylor-meador.com:8007']
   labels:
-        service: pbs
+    service: pbs
