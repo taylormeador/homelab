@@ -2,64 +2,77 @@
 
 Ideas and future work for the homelab platform. Pick up where it makes sense.
 
-## Phase 1: Kubernetes + ArgoCD
+## Phase 1: Kubernetes (Talos) + ArgoCD
 
-Stand up a k8s cluster on Proxmox VMs (provisioned by tofu) with ArgoCD for GitOps deployments. This becomes the platform layer that new services deploy onto — separate from the existing Ansible-managed infrastructure that runs critical services.
+Stand up a Talos k8s cluster on Proxmox VMs with ArgoCD for GitOps deployments. Set up manually first to learn the pain points, then codify with tofu later.
 
-- k3s or kubeadm cluster on Proxmox VMs, provisioned via tofu
-- ArgoCD watches a GitOps repo, deploys apps from manifests/Helm charts
-- Alloy DaemonSet for metrics + logs shipping to existing Prometheus/Loki
+- Talos Linux VMs on Proxmox (own VLAN, e.g. VLAN 30)
+- Longhorn for persistent storage (dedicated virtual disks per node)
+- ArgoCD watches GitOps repos, deploys apps from manifests/Helm charts
+- Alloy DaemonSet for metrics + logs to existing Prometheus/Loki (firewall rule from k8s VLAN to monitoring-ct)
 - Ingress controller + Cloudflare tunnel for external access
-- This is the foundation everything else builds on
+- OPNsense firewall rules for inter-VLAN routing to k8s
+- Once stable, rebuild with tofu for the production setup
 
-## Phase 2: Go CLI (`lab`)
+## Phase 2: Go CLI + API Server
 
-Build a CLI that manages the full lifecycle of services, backed by Terraform modules and ArgoCD.
+### Architecture
 
-**Key feature: local vs cloud provisioning**
-- `lab deploy --target local` provisions on Proxmox k8s cluster
-- `lab deploy --target aws` provisions on EKS/EC2
-- Both environments route to the same observability stack (Prometheus, Grafana, Loki)
-- Same CLI, same dashboards, different infrastructure underneath
-- The hard part is making the abstraction work cleanly across both — different Terraform modules, networking, log/metric shipping
+```
+User's machine              Cluster
+┌──────────┐               ┌────────────────────────┐
+│  CLI     │──── gRPC ────>│  API server            │
+│  (thin   │               │  (auth + authorization)│
+│  client) │               │    │                   │
+└──────────┘               │    ├─> git push        │
+                           │    ├─> ArgoCD CR       │
+                           │    └─> k8s API         │
+                           │                        │
+                           │  All credentials stay  │
+                           │  in the cluster        │
+                           └────────────────────────┘
+```
 
-**Lifecycle management (the impressive part)**
+**Three layers, strict separation:**
+- **`pkg/platform/`** — core library: all platform logic (scaffolding, git ops, ArgoCD management, teardown)
+- **API server** — runs in k8s, wraps the library, handles auth + authorization, holds all infrastructure credentials. Users never touch git/ArgoCD/kubectl directly.
+- **CLI** — thin gRPC client. Knows how to call the API and display results. Contains zero platform logic.
 
-One command should handle:
-- VM/CT or cloud resource provisioning
-- App deployment (commit to GitOps repo, ArgoCD syncs)
-- Prometheus target registration
-- Grafana dashboard creation
-- Log shipping setup (Loki)
-- DNS/Cloudflare tunnel entry
-- Portal registration
-- Teardown cleans up all of the above
+**Why gRPC:** protobuf definitions are the API contract — server and client are generated from the same `.proto` files so they can't drift. Server-streaming gives real-time progress in the CLI ("creating repo... pushing... syncing... live"). It's what the k8s/ArgoCD ecosystem uses internally.
 
-**Implementation notes:**
-- Cobra for CLI framework
-- Thin interface: tofu for infra, GitOps commits for app deployment
-- Replaces the "I need a Go project" gap — bounded, practical, teaches Go in a real context
+### CLI capabilities
 
-## Phase 3: Portal + Demo
+One command handles the full lifecycle:
+- `mycli create app --name foo --template go-api` — scaffold, push, ArgoCD sync
+- `mycli status foo` — deployment state, endpoints, health
+- `mycli logs foo` — stream logs from Loki
+- `mycli destroy foo` — tear down everything (app, repo, ArgoCD CR, DNS, monitoring)
 
-### taylor-meador.com as Living Infrastructure Demo
+Each operation goes through the API server, which enforces what the user is allowed to do.
 
-One site serving as both public-facing landing page and gateway into infrastructure:
+### Local vs cloud provisioning (stretch goal)
+- `--target local` provisions on Proxmox k8s cluster
+- `--target aws` provisions on EKS/EC2
+- Same CLI, same observability, different infrastructure underneath
 
-- **Landing page:** who you are, architecture overview, links to live tools
-- **Grafana:** anonymous viewer mode for curated demo dashboards (public)
-- **Portal:** behind Cloudflare Access -> provisioning UI, internal tools
-- **Additional services** added as they're built
+## Phase 3: Demo + taylor-meador.com
 
-**Interview demo:** Deploy a full service stack live during an interview via the portal. Provision it, show it immediately appearing in monitoring, logging, and the portal. Tear it down, everything cleans up.
+### Web terminal for demos
+Browser-based terminal (ttyd/xterm.js) with the CLI pre-installed. Interviewers can run CLI commands and watch the platform work in real time — no install needed. Way more impressive than a dashboard with buttons.
 
-### Public architecture page
-Diagram of homelab topology, services, design decisions. Easy to maintain, shows systems thinking.
+### taylor-meador.com
+- **Web terminal** — live platform demo
+- **Grafana** — anonymous viewer mode for curated dashboards
+- **Stock app** — real application running on the platform
+- **Architecture docs** — topology, design decisions, shows systems thinking
+
+### Interview demo flow
+Open the web terminal, run `mycli create app --name demo --template go-api`, watch it provision, show it in Grafana monitoring and Loki logs, then `mycli destroy demo` — everything cleans up.
 
 ## Service Ideas
 
 ### Game servers on demand
-Spin up Minecraft/Valheim/etc servers via the portal, auto-shutdown after idle. Already started on Minecraft provisioning.
+Spin up Minecraft/Valheim/etc servers via the CLI, auto-shutdown after idle.
 
 ### VPN / tunnel service
 WireGuard-based access for friends or as a personal travel VPN.
@@ -75,4 +88,4 @@ WireGuard-based access for friends or as a personal travel VPN.
 - Routing logic: simple tasks -> local model, complex tasks -> Claude
 
 ### Open WebUI
-Self-hosted ChatGPT-style interface connected to the LLM gateway. Accessible through the portal.
+Self-hosted ChatGPT-style interface connected to the LLM gateway. Accessible through the CLI/platform.
