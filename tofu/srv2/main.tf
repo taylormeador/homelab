@@ -315,41 +315,13 @@ resource "proxmox_virtual_environment_vm" "pbs_vm" {
   }
 
   cpu {
-    cores   = 2
+    cores   = 4
     sockets = 1
     type    = "x86-64-v2-AES"
   }
 
   memory {
-    dedicated = 4096
-  }
-
-  operating_system {
-    type = "l26"
-  }
-}
-
-resource "proxmox_virtual_environment_vm" "torrent" {
-  node_name     = "srv2"
-  vm_id         = 114
-  name          = "torrent"
-  scsi_hardware = "virtio-scsi-single"
-  on_boot       = true
-
-  agent {
-    enabled = true
-    timeout = "15m"
-    type    = "virtio"
-  }
-
-  cpu {
-    cores   = 2
-    sockets = 1
-    type    = "x86-64-v2-AES"
-  }
-
-  memory {
-    dedicated = 4096
+    dedicated = 8192
   }
 
   operating_system {
@@ -426,34 +398,6 @@ resource "proxmox_virtual_environment_vm" "postgres_vm" {
 
   memory {
     dedicated = 12288
-  }
-
-  operating_system {
-    type = "l26"
-  }
-}
-
-resource "proxmox_virtual_environment_vm" "services_vm" {
-  node_name     = "srv2"
-  vm_id         = 123
-  name          = "services-vm"
-  scsi_hardware = "virtio-scsi-single"
-  on_boot       = true
-
-  agent {
-    enabled = true
-    timeout = "15m"
-    type    = "virtio"
-  }
-
-  cpu {
-    cores   = 2
-    sockets = 1
-    type    = "x86-64-v2-AES"
-  }
-
-  memory {
-    dedicated = 6144
   }
 
   operating_system {
