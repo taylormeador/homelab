@@ -44,6 +44,13 @@
         ip: 10.0.10.102
       - hostname: db
         ip: 10.0.10.121
+      # NFS drives (resolve to whichever host the drive lives in)
+      - hostname: hdd-3tb
+        ip: 10.0.10.101
+      - hostname: hdd-2tb
+        ip: 10.0.10.102
+      - hostname: hdd-6tb
+        ip: 10.0.10.102
 
   tasks:
     - name: Create DNS host overrides
