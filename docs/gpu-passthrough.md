@@ -102,5 +102,30 @@ Pass through input devices by vendor/device ID (Hardware > Add > USB Device):
 |--------|--------------|
 | Keychron K4 Pro | 3434:0240 |
 | Logitech USB Receiver | 046d:c53f |
+| 8BitDo Ultimate 2 (2.4GHz dongle) | 2dc8:310b |
+| 8BitDo Ultimate 2 (wired) | 2dc8:6013 |
 
 Using vendor/device ID instead of port means they work across unplug/replug cycles.
+
+### 8BitDo Controller Passthrough Fix
+
+The 8BitDo Ultimate 2 dongle won't pass through by default because the host's `xpad` and `usbhid` drivers claim it before QEMU can. Other USB devices bind to `usbfs` (QEMU's userspace driver) automatically, but gamepads get grabbed by the kernel.
+
+**Fix:** Create a udev rule on the Proxmox host to prevent any driver from claiming the device:
+
+`/etc/udev/rules.d/99-8bitdo-passthrough.rules`:
+```
+SUBSYSTEM=="usb", ATTR{idVendor}=="2dc8", ATTR{idProduct}=="310b", ENV{DEVTYPE}=="usb_device", OPTIONS+="ignore_device"
+```
+
+Reload rules:
+```bash
+udevadm control --reload-rules
+```
+
+If using wired mode (product ID 6013), add a second rule for that ID.
+
+**Notes:**
+- Controller mode switch must be set to 2.4G for the dongle to work
+- The 2.4GHz dongle pairs directly to the controller — no OS-level pairing needed
+- Steam detects the controller automatically once the OS sees it as a gamepad
