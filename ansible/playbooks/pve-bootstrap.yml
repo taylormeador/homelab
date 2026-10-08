@@ -12,8 +12,14 @@
   #   1. Set taylor's password from the console: passwd taylor
   #   2. Change the switch port to tagged (VLAN 10, 20, 30)
   #   3. Reboot the node
-  #   4. Add DNS record to dns.yml and run the dns playbook
-  #   5. Add nginx entry to nginx.yml and run the nginx playbook
+  #   4. Add host to inventory/hosts.yml
+  #   5. Add DNS + nginx entries (dns.yml, nginx.yml) and deploy both
+  #   6. Deploy monitoring: ansible-playbook playbooks/logging.yml --ask-become-pass --ask-vault-pass
+
+  vars_prompt:
+    - name: pbs_password
+      prompt: "PBS root@pam password"
+      private: true
 
   vars:
     physical_nic: "{{ nic | default('eno1') }}"
@@ -88,6 +94,39 @@
       when: item.rc == 0
       loop_control:
         label: "{{ item.item }}"
+
+    - name: Add HDD storage locations
+      ansible.builtin.command: >
+        pvesm add dir {{ item }}
+        --path /mnt/{{ item }}
+        --content iso,vztmpl,images
+        --prune-backups keep-all=1
+        --shared 0
+      register: pvesm_dir
+      failed_when: pvesm_dir.rc != 0 and 'already defined' not in pvesm_dir.stderr
+      changed_when: pvesm_dir.rc == 0
+      loop:
+        - hdd-3tb
+        - hdd-2tb
+        - hdd-6tb
+
+    - name: Add PBS storage locations
+      ansible.builtin.command: >
+        pvesm add pbs {{ item }}-pbs
+        --datastore {{ item }}-pbs
+        --server 10.0.10.113
+        --content backup
+        --fingerprint 2e:f7:e5:d4:7b:49:54:a0:82:0c:3b:fb:c0:4a:b9:40:eb:16:1c:7f:40:90:ba:30:c8:ec:6a:17:bc:eb:6a:2d
+        --prune-backups keep-all=1
+        --username root@pam
+        --password {{ pbs_password }}
+      register: pvesm_pbs
+      failed_when: pvesm_pbs.rc != 0 and 'already defined' not in pvesm_pbs.stderr
+      changed_when: pvesm_pbs.rc == 0
+      loop:
+        - hdd-3tb
+        - hdd-2tb
+        - hdd-6tb
 
     - name: Deploy VLAN-aware network config
       ansible.builtin.template:
