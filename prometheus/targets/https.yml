@@ -4,6 +4,12 @@
 - targets: ['https://srv2.lab.taylor-meador.com:8006']
   labels:
     service: pve-srv2
+- targets: ['https://srv3.lab.taylor-meador.com:8006']
+  labels:
+    service: pve-srv3
+- targets: ['https://srv4.lab.taylor-meador.com:8006']
+  labels:
+    service: pve-srv4
 - targets: ['https://pbs-vm.lab.taylor-meador.com:8007']
   labels:
     service: pbs
