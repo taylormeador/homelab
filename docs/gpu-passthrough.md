@@ -30,29 +30,33 @@ Both functions are in separate IOMMU groups with no other devices — clean isol
 
 ### VFIO binding
 
-`/etc/modprobe.d/vfio.conf`:
-```
-options vfio-pci ids=1002:731f,1002:ab38
+```bash
+echo 'options vfio-pci ids=1002:731f,1002:ab38' > /etc/modprobe.d/vfio.conf
 ```
 
 ### Blacklist host GPU driver
 
-`/etc/modprobe.d/blacklist-amdgpu.conf`:
-```
-blacklist amdgpu
+```bash
+echo 'blacklist amdgpu' > /etc/modprobe.d/blacklist-amdgpu.conf
 ```
 
 ### Kernel modules
 
-Added to `/etc/modules`:
-```
+```bash
+cat >> /etc/modules << 'EOF'
 vfio
 vfio_iommu_type1
 vfio_pci
 vendor-reset
+EOF
 ```
 
-After changes: `update-initramfs -u -k all` and reboot.
+### Apply and reboot
+
+```bash
+update-initramfs -u -k all
+reboot
+```
 
 ### Verify VFIO claimed the GPU
 
@@ -64,6 +68,10 @@ lspci -k -s 67:00.0
 ## AMD Reset Bug
 
 Navi GPUs (RX 5000/5600/5700 series) can't reset properly after VM shutdown, preventing the VM from starting again without a host reboot. The `vendor-reset` DKMS module fixes this.
+
+echo 1 > /sys/bus/pci/devices/0000:67:00.0/remove
+echo 1 > /sys/bus/pci/devices/0000:67:00.1/remove
+echo 1 > /sys/bus/pci/rescan
 
 ### Install vendor-reset
 
