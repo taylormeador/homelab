@@ -8,6 +8,10 @@
         ip: 10.0.10.101
       - hostname: srv2
         ip: 10.0.10.102
+      - hostname: srv3
+        ip: 10.0.10.103
+      - hostname: srv4
+        ip: 10.0.10.104
       - hostname: dev-ct
         ip: 10.0.10.110
       - hostname: minecraft-ct
@@ -36,6 +40,10 @@
       - hostname: pve1
         ip: 10.0.10.120
       - hostname: pve2
+        ip: 10.0.10.120
+      - hostname: pve3
+        ip: 10.0.10.120
+      - hostname: pve4
         ip: 10.0.10.120
       - hostname: pbs
         ip: 10.0.10.120

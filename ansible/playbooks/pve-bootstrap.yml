@@ -1,0 +1,108 @@
+- name: Bootstrap Proxmox node
+  hosts: all
+  become: true
+  gather_facts: true
+
+  # Usage:
+  #   ANSIBLE_HOST_KEY_CHECKING=false ansible-playbook playbooks/pve-bootstrap.yml \
+  #     -i '<ip>,' -u root --ask-pass \
+  #     -e management_ip=10.0.10.X -e physical_nic=eno1
+  #
+  # Manual steps after the playbook completes:
+  #   1. Set taylor's password from the console: passwd taylor
+  #   2. Change the switch port to tagged (VLAN 10, 20, 30)
+  #   3. Reboot the node
+  #   4. Add DNS record to dns.yml and run the dns playbook
+  #   5. Add nginx entry to nginx.yml and run the nginx playbook
+
+  vars:
+    physical_nic: "{{ nic | default('eno1') }}"
+    all_drives:
+      - hdd-3tb
+      - hdd-2tb
+      - hdd-6tb
+
+  tasks:
+    - name: Remove enterprise repositories
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - /etc/apt/sources.list.d/pve-enterprise.sources
+        - /etc/apt/sources.list.d/ceph.sources
+
+    - name: Add no-subscription repository
+      ansible.builtin.deb822_repository:
+        name: pve-no-subscription
+        uris: http://download.proxmox.com/debian/pve
+        suites: "{{ ansible_facts['distribution_release'] }}"
+        components: pve-no-subscription
+        state: present
+
+    - name: Update and upgrade packages
+      ansible.builtin.apt:
+        update_cache: true
+        upgrade: dist
+
+    - name: Install base packages
+      ansible.builtin.apt:
+        name:
+          - sudo
+          - vim
+          - nfs-common
+        state: present
+
+    - name: Create taylor user
+      ansible.builtin.user:
+        name: taylor
+        groups: sudo
+        append: true
+        shell: /bin/bash
+
+    - name: Add SSH authorized key for taylor
+      ansible.posix.authorized_key:
+        user: taylor
+        key: "{{ lookup('file', '~/.ssh/id_ed25519.pub') }}"
+
+    - name: Detect local drives by label
+      ansible.builtin.command: blkid -L {{ item }}
+      register: local_drives
+      loop: "{{ all_drives }}"
+      failed_when: false
+      changed_when: false
+
+    - name: Create mount points
+      ansible.builtin.file:
+        path: /mnt/{{ item }}
+        state: directory
+        mode: "0755"
+      loop: "{{ all_drives }}"
+
+    - name: Mount local drives by label
+      ansible.posix.mount:
+        path: /mnt/{{ item.item }}
+        src: LABEL={{ item.item }}
+        fstype: ext4
+        state: mounted
+      loop: "{{ local_drives.results }}"
+      when: item.rc == 0
+      loop_control:
+        label: "{{ item.item }}"
+
+    - name: Deploy VLAN-aware network config
+      ansible.builtin.template:
+        src: templates/pve-interfaces.j2
+        dest: /etc/network/interfaces
+        backup: true
+
+    - name: NFS mount remote drives
+      ansible.posix.mount:
+        path: /mnt/{{ item.item }}
+        src: "{{ item.item }}.lab.taylor-meador.com:/mnt/{{ item.item }}"
+        fstype: nfs
+        opts: defaults
+        state: mounted
+      loop: "{{ local_drives.results }}"
+      when: item.rc != 0
+      loop_control:
+        label: "{{ item.item }}"

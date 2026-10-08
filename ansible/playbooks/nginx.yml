@@ -14,6 +14,10 @@
         backend: "https://10.0.10.101:8006"
       - name: pve2
         backend: "https://10.0.10.102:8006"
+      - name: pve3
+        backend: "https://10.0.10.103:8006"
+      - name: pve4
+        backend: "https://10.0.10.104:8006"
       - name: pbs
         backend: "https://10.0.10.113:8007"
 
