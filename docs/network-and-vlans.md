@@ -2,7 +2,7 @@
 
 ## Physical Topology
 
-Two Proxmox hypervisors (srv1, srv2) connected to Netgear GS308E managed switches. OPNsense router handles inter-VLAN routing and is the default gateway for all VLANs.
+Four Proxmox hypervisors (srv1, srv2, srv3, srv4) connected to Netgear GS308E managed switches. OPNsense router handles inter-VLAN routing and is the default gateway for all VLANs.
 
 ```
 Internet
@@ -10,8 +10,8 @@ Internet
 OPNsense (10.0.10.1) ── VLAN trunk
    |
 GS308E switches ── tagged uplinks between switches
-   |         |
-  srv1      srv2
+   |         |         |         |
+  srv1      srv2      srv3      srv4
 ```
 
 ## VLANs
@@ -27,7 +27,7 @@ Future candidates: DMZ for public-facing services.
 
 ## VLAN-Aware Bridge Architecture
 
-Both hypervisors use a single VLAN-aware bridge (`vmbr0`) instead of per-VLAN bridges. This is the Proxmox-recommended approach.
+All hypervisors use a single VLAN-aware bridge (`vmbr0`) instead of per-VLAN bridges. This is the Proxmox-recommended approach.
 
 ### How it works
 
@@ -135,16 +135,6 @@ VLAN 30 is dedicated to the Talos k8s cluster. Talos VMs on both srv1 and srv2 u
 3. **Hypervisors**: add the VID to `bridge-vids` in `/etc/network/interfaces`, apply config
 4. **Guests**: set `vlan_id` in tofu config or Proxmox GUI
 
-## Migrating srv2
+## Bootstrapping New Nodes
 
-srv2 currently uses the older per-VLAN bridge approach (`eno1.10` → `vmbr10`, `eno1.20` → `vmbr20`). This works but creates extra bridges and doesn't let you manage VLANs per-guest in the GUI as cleanly.
-
-Migration plan:
-1. Create `vmbr0` as a VLAN-aware bridge on `eno1` with `bridge-vids 10 20 30`
-2. Create `vmbr0.10` with srv2's management IP (`10.0.10.102/24`)
-3. Update each guest to use `vmbr0` with the appropriate `vlan_id` instead of `vmbr10`/`vmbr20`
-4. Update switch port from untagged to tagged
-5. Remove old bridges (`vmbr10`, `vmbr20`) and VLAN subinterfaces (`eno1.10`, `eno1.20`)
-6. Update tofu configs to use `vmbr0` + `vlan_id` instead of `vmbrN`
-
-This is a disruptive change — every guest loses connectivity briefly during the switchover. Plan for a maintenance window.
+New PVE nodes are bootstrapped with `ansible/playbooks/pve-bootstrap.yml`. See the playbook header for usage and manual post-steps. The playbook handles repos, packages, user setup, drive mounts (auto-detects local vs NFS by label), storage locations, and VLAN-aware network config.
