@@ -20,6 +20,8 @@
         backend: "https://10.0.10.104:8006"
       - name: pbs
         backend: "https://10.0.10.113:8007"
+      - name: argocd
+        backend: "http://10.0.30.21:30443"
 
   roles:
     - nginx_proxy

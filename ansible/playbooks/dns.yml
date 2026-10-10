@@ -47,6 +47,8 @@
         ip: 10.0.10.120
       - hostname: pbs
         ip: 10.0.10.120
+      - hostname: argocd
+        ip: 10.0.10.120
       # Role names (resolve to the serving host)
       - hostname: nfs
         ip: 10.0.10.102
