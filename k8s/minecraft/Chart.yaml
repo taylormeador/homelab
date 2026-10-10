@@ -1,0 +1,4 @@
+apiVersion: v2
+name: minecraft
+description: Minecraft hardcore server
+version: 0.1.0

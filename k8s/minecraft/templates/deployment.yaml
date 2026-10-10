@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.name }}
+  labels:
+    app: {{ .Values.name }}
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: {{ .Values.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.name }}
+    spec:
+      containers:
+        - name: minecraft
+          image: {{ .Values.image }}
+          env:
+            - name: EULA
+              value: "TRUE"
+            - name: TYPE
+              value: {{ .Values.server.type | quote }}
+            - name: HARDCORE
+              value: "true"
+            - name: DIFFICULTY
+              value: {{ .Values.server.difficulty | quote }}
+            - name: MEMORY
+              value: {{ .Values.server.memory | quote }}
+            - name: MOTD
+              value: {{ .Values.server.motd | quote }}
+            - name: VERSION
+              value: {{ .Values.server.version | quote }}
+          ports:
+            - containerPort: 25565
+              name: minecraft
+          volumeMounts:
+            - name: world-data
+              mountPath: /data
+          resources:
+            requests:
+              memory: {{ .Values.resources.requests.memory }}
+              cpu: {{ .Values.resources.requests.cpu | quote }}
+            limits:
+              memory: {{ .Values.resources.limits.memory }}
+              cpu: {{ .Values.resources.limits.cpu | quote }}
+      volumes:
+        - name: world-data
+          persistentVolumeClaim:
+            claimName: {{ .Values.name }}

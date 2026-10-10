@@ -1,0 +1,21 @@
+name: minecraft-0
+clusterIP: 10.96.1.0
+
+image: itzg/minecraft-server:java25
+
+server:
+  version: "26.3"
+  type: PAPER
+  difficulty: hard
+  memory: 2G
+  motd: Hardcore
+
+resources:
+  requests:
+    memory: 2Gi
+    cpu: 500m
+  limits:
+    memory: 4Gi
+    cpu: "2"
+
+storage: 2Gi
