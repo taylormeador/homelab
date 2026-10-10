@@ -1,0 +1,33 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: minecraft
+  namespace: argocd
+spec:
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
+  generators:
+    - git:
+        repoURL: https://github.com/taylormeador/homelab
+        revision: main
+        files:
+          - path: k8s/minecraft/worlds/*.yaml
+  template:
+    metadata:
+      name: "{{ .name }}"
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/taylormeador/homelab
+        targetRevision: main
+        path: k8s/minecraft
+        helm:
+          valueFiles:
+            - "worlds/{{ .name }}.yaml"
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: default
+      syncPolicy:
+        automated:
+          selfHeal: true
+          prune: true
