@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: minecraft
+  name: minecraft-0
   labels:
-    app: minecraft
+    app: minecraft-0
 spec:
   replicas: 1
   strategy:
     type: Recreate
   selector:
     matchLabels:
-      app: minecraft
+      app: minecraft-0
   template:
     metadata:
       labels:
-        app: minecraft
+        app: minecraft-0
     spec:
       containers:
         - name: minecraft
@@ -50,14 +50,14 @@ spec:
       volumes:
         - name: world-data
           persistentVolumeClaim:
-            claimName: minecraft-world
+            claimName: minecraft-0
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: minecraft-world
+  name: minecraft-0
   labels:
-    app: minecraft
+    app: minecraft-0
 spec:
   accessModes:
     - ReadWriteOnce
@@ -68,15 +68,15 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: minecraft
+  name: minecraft-0
   labels:
-    app: minecraft
+    app: minecraft-0
 spec:
-  type: NodePort
+  type: ClusterIP
+  clusterIP: 10.96.1.0
   selector:
-    app: minecraft
+    app: minecraft-0
   ports:
     - protocol: TCP
       port: 25565
       targetPort: 25565
-      nodePort: 30565
