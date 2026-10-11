@@ -1,12 +1,13 @@
-- name: Bootstrap Talos k8s cluster
+- name: Set up Talos cluster services
   hosts: localhost
   connection: local
   gather_facts: false
   # Usage:
-  #   ansible-playbook playbooks/talos-bootstrap.yml
+  #   ansible-playbook playbooks/talos-setup.yml
   #
   # Prerequisites:
-  #   - Nodes on static IPs (run talos-provision.yml first)
+  #   - Cluster provisioned and bootstrapped via tofu (tofu/talos/)
+  #   - talosconfig and kubeconfig extracted from tofu outputs
   #
   # Idempotent — safe to re-run at any point.
 
@@ -15,7 +16,6 @@
     k8s_dir: "{{ lookup('env', 'HOME') }}/repos/homelab/k8s"
     talosconfig: "{{ talos_dir }}/talosconfig"
     longhorn_disk_config: "{{ talos_dir }}/longhorn-user-disk.yaml"
-    bootstrap_node: 10.0.30.11
 
     nodes:
       - name: cp-1
@@ -35,67 +35,6 @@
         role: worker
 
   tasks:
-    - name: Wait for nodes on static IPs
-      ansible.builtin.wait_for:
-        host: "{{ item.ip }}"
-        port: 50000
-        timeout: 300
-      loop: "{{ nodes }}"
-      loop_control:
-        label: "{{ item.name }} ({{ item.ip }})"
-
-    # --- Bootstrap ---
-
-    - name: Set talosconfig endpoints
-      ansible.builtin.command: >
-        talosctl config endpoints
-        --talosconfig {{ talosconfig }}
-        10.0.30.11 10.0.30.12 10.0.30.13
-
-    - name: Set talosconfig nodes
-      ansible.builtin.command: >
-        talosctl config nodes
-        --talosconfig {{ talosconfig }}
-        10.0.30.11
-
-    - name: Check if etcd is already running
-      ansible.builtin.shell: >
-        talosctl --talosconfig {{ talosconfig }}
-        --nodes {{ bootstrap_node }}
-        service etcd 2>&1 | grep -q 'STATE.*Running'
-      register: etcd_check
-      failed_when: false
-      changed_when: false
-
-    - name: Bootstrap cluster
-      ansible.builtin.command: >
-        talosctl bootstrap
-        --talosconfig {{ talosconfig }}
-        --nodes {{ bootstrap_node }}
-      when: etcd_check.rc != 0
-
-    # --- Wait for k8s ---
-
-    - name: Get kubeconfig
-      ansible.builtin.command: >
-        talosctl kubeconfig
-        --talosconfig {{ talosconfig }}
-        --nodes {{ bootstrap_node }}
-        --force
-      retries: 10
-      delay: 15
-      register: kubeconfig_result
-      until: kubeconfig_result.rc == 0
-
-    - name: Wait for all nodes to be Ready
-      ansible.builtin.shell: >
-        kubectl get nodes --no-headers | grep -c ' Ready'
-      register: ready_count
-      retries: 30
-      delay: 15
-      until: ready_count.stdout | int >= (nodes | length)
-      changed_when: false
-
     # --- Verify extensions ---
 
     - name: Verify extensions on all nodes
@@ -195,16 +134,10 @@
       register: argocd_ready
       until: argocd_ready.rc == 0
 
-    # --- Minecraft ApplicationSet ---
+    # --- Root app (ArgoCD manages everything from here) ---
 
-    - name: Apply playit agent secret
-      ansible.builtin.command: kubectl apply -f {{ k8s_dir }}/playit-secret.yaml
-
-    - name: Apply playit agent deployment
-      ansible.builtin.command: kubectl apply -f {{ k8s_dir }}/playit-agent.yaml
-
-    - name: Apply Minecraft ApplicationSet
-      ansible.builtin.command: kubectl apply -f {{ k8s_dir }}/argocd/minecraft-appset.yaml
+    - name: Apply root ArgoCD application
+      ansible.builtin.command: kubectl apply -f {{ k8s_dir }}/argocd/root-app.yaml
 
     - name: Show ArgoCD admin password
       ansible.builtin.shell: >
@@ -213,9 +146,10 @@
       register: argocd_password
       changed_when: false
 
-    - name: Cluster bootstrap complete
+    - name: Setup complete
       ansible.builtin.debug:
         msg:
-          - "Cluster is up with {{ nodes | selectattr('role', 'eq', 'controlplane') | list | length }} control plane + {{ nodes | selectattr('role', 'eq', 'worker') | list | length }} worker nodes"
+          - "Cluster services installed"
           - "ArgoCD UI: http://argocd.lab.taylor-meador.com"
           - "ArgoCD admin password: {{ argocd_password.stdout }}"
+          - "ArgoCD root app will sync all applications from k8s/argocd/"
