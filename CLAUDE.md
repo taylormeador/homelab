@@ -21,7 +21,22 @@ Key playbooks:
 - `nginx.yml` — Reverse proxy configs on nginx-ct
 - `backup-opnsense.yml` — OPNsense config backup
 
-Infrastructure provisioning (per-host directories):
+Talos k8s cluster (full rebuild from scratch):
+
+```bash
+cd tofu/talos
+tofu apply -target=talos_machine_secrets.this   # create secrets first (OpenTofu provider bug workaround)
+tofu apply                                       # VMs + config apply + bootstrap
+tofu output -raw talosconfig > ~/repos/homelab/talos/talosconfig
+tofu output -raw kubeconfig > ~/.kube/config
+
+cd ../../ansible
+ansible-playbook playbooks/talos-setup.yml       # Longhorn, ArgoCD, root app
+```
+
+After setup, apps are deployed via gitops: add manifests to `k8s/<app>/` and an ArgoCD Application to `k8s/argocd/`, commit and push.
+
+Other infrastructure provisioning (per-host directories):
 
 ```bash
 cd tofu/srv1   # or tofu/srv2
@@ -35,7 +50,9 @@ Each host has its own `.env` with API credentials, loaded automatically by diren
 
 **Monitoring pipeline:** Grafana Alloy runs on all Linux hosts, pushing node metrics to Prometheus via remote_write and journal logs to Loki. Prometheus also scrapes blackbox-exporter for HTTP/HTTPS/TCP probes. Grafana reads from Prometheus and Loki, rendering dashboards provisioned from JSON files.
 
-**Hosts:** srv1/srv2 are Proxmox hypervisors. pve1/pve2 are service aliases for Proxmox web UIs through the nginx reverse proxy. OPNsense router uses a community Prometheus exporter (FreeBSD, can't run Alloy).
+**Hosts:** srv1/srv2/srv3 are Proxmox hypervisors. pve1/pve2 are service aliases for Proxmox web UIs through the nginx reverse proxy. OPNsense router uses a community Prometheus exporter (FreeBSD, can't run Alloy).
+
+**Talos k8s cluster:** "dexter" on VLAN 30. VMs provisioned and configured by OpenTofu (`tofu/talos/`), cluster services (Longhorn, ArgoCD) installed by Ansible (`ansible/playbooks/talos-setup.yml`). Apps deployed via ArgoCD gitops — manifests in `k8s/<app>/`, ArgoCD Applications in `k8s/argocd/`. Root app auto-syncs everything in `k8s/argocd/`.
 
 ## Key Conventions
 

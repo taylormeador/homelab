@@ -116,7 +116,7 @@ VLAN 30 is dedicated to the Talos k8s cluster. Talos VMs on both srv1 and srv2 u
 | Control plane VIP | — | 10.0.30.10 | (virtual) |
 | Control plane 1 | talos-cp-1 | 10.0.30.11 | srv1 |
 | Control plane 2 | talos-cp-2 | 10.0.30.12 | srv2 |
-| Control plane 3 | talos-cp-3 | 10.0.30.13 | srv2 |
+| Control plane 3 | talos-cp-3 | 10.0.30.13 | srv3 |
 | Worker 1 | talos-w-1 | 10.0.30.21 | srv1 |
 | Worker 2 | talos-w-2 | 10.0.30.22 | srv2 |
 
@@ -126,7 +126,7 @@ VLAN 30 is dedicated to the Talos k8s cluster. Talos VMs on both srv1 and srv2 u
 - Allow VLAN 30 → VLAN 10 for specific services (DNS, NFS, monitoring endpoints)
 - Deny all other inter-VLAN traffic
 
-**DHCP:** Temporarily enabled on VLAN 30 for initial Talos bootstrap. Disable after all nodes have static IPs in their machine configs.
+**DHCP:** Enabled on VLAN 30. Talos nodes boot with DHCP, then OpenTofu applies static IPs via machine config patches. DHCP must remain enabled for fresh cluster rebuilds.
 
 ## Adding a New VLAN
 

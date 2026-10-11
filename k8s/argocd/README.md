@@ -1,42 +1,25 @@
-# ArgoCD Setup
+# ArgoCD
 
-ArgoCD is installed manually since it manages everything else in the cluster.
+Installed by `ansible/playbooks/talos-setup.yml`. All apps are managed via the root app pattern.
 
-## Install
+## How it works
 
-```bash
-kubectl create namespace argocd
+The setup playbook installs ArgoCD and applies `root-app.yaml`, which watches `k8s/argocd/` with auto-sync and prune. Any Application or ApplicationSet YAML added to this directory is automatically picked up.
 
-kubectl apply -n argocd --server-side --force-conflicts \
-  -f https://raw.githubusercontent.com/argoproj/argo-cd/v3.2.0/manifests/install.yaml
-```
+## Adding a new app
 
-## Configure
-
-Disable internal TLS (nginx handles HTTP proxying):
-
-```bash
-kubectl -n argocd patch configmap argocd-cmd-params-cm \
-  --type merge -p '{"data": {"server.insecure": "true"}}'
-kubectl -n argocd rollout restart deployment argocd-server
-```
-
-Expose via NodePort:
-
-```bash
-kubectl patch svc argocd-server -n argocd \
-  -p '{"spec": {"type": "NodePort", "ports": [{"port": 443, "targetPort": 8080, "nodePort": 30443, "protocol": "TCP", "name": "https"}]}}'
-```
-
-DNS and nginx entries are in the Ansible playbooks (`dns.yml`, `nginx.yml`).
+1. Put manifests in `k8s/<app-name>/`
+2. Create `k8s/argocd/<app-name>-app.yaml` (ArgoCD Application pointing at that directory)
+3. Commit and push — ArgoCD syncs automatically
 
 ## Access
 
 - **Web UI:** http://argocd.lab.taylor-meador.com
 - **CLI:** `argocd login argocd.lab.taylor-meador.com:80 --grpc-web --plaintext`
-- **Initial admin password:** `kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 -d`
+- **Admin password:** `kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 -d`
 
-## Docs
+## Config details
 
-- https://argo-cd.readthedocs.io/en/stable/getting_started/
-- https://argo-cd.readthedocs.io/en/stable/operator-manual/ingress/
+- Insecure mode (nginx handles TLS termination)
+- NodePort 30443
+- DNS and nginx entries managed by Ansible (`dns.yml`, `nginx.yml`)
