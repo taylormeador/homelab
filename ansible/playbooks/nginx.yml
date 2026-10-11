@@ -22,6 +22,8 @@
         backend: "https://10.0.10.113:8007"
       - name: argocd
         backend: "http://10.0.30.21:30443"
+      - name: k8s-grafana
+        backend: "http://10.0.30.21:30080"
 
   roles:
     - nginx_proxy

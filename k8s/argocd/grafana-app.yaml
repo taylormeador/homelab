@@ -1,0 +1,44 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: grafana
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://grafana.github.io/helm-charts
+    chart: grafana
+    targetRevision: "10.5.15"
+    helm:
+      valuesObject:
+        persistence:
+          enabled: true
+          size: 5Gi
+          storageClass: longhorn
+        datasources:
+          datasources.yaml:
+            apiVersion: 1
+            datasources:
+              - name: Prometheus
+                type: prometheus
+                url: http://prometheus-server.monitoring.svc:80
+                isDefault: true
+              - name: Loki
+                type: loki
+                url: http://loki-gateway.monitoring.svc:80
+        sidecar:
+          dashboards:
+            enabled: true
+            searchNamespace: monitoring
+        service:
+          type: NodePort
+          nodePort: 30080
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: monitoring
+  syncPolicy:
+    automated:
+      selfHeal: true
+      prune: true
+    syncOptions:
+      - CreateNamespace=false
