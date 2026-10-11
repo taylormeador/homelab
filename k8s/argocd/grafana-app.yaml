@@ -21,12 +21,10 @@ spec:
             datasources:
               - name: Prometheus
                 type: prometheus
-                uid: prometheus
                 url: http://prometheus-server.monitoring.svc:80
                 isDefault: true
               - name: Loki
                 type: loki
-                uid: loki
                 url: http://loki-gateway.monitoring.svc:80
         sidecar:
           dashboards:

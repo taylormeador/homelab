@@ -9,7 +9,7 @@
       {
         "name": "namespace",
         "type": "query",
-        "datasource": { "type": "prometheus", "uid": "prometheus" },
+        "datasource": { "type": "prometheus" },
         "query": "label_values(kube_pod_info, namespace)",
         "refresh": 2,
         "includeAll": true,
@@ -20,7 +20,7 @@
       {
         "name": "pod",
         "type": "query",
-        "datasource": { "type": "prometheus", "uid": "prometheus" },
+        "datasource": { "type": "prometheus" },
         "query": "label_values(kube_pod_info{namespace=~\"$namespace\"}, pod)",
         "refresh": 2,
         "includeAll": true,
@@ -36,7 +36,7 @@
       "type": "table",
       "title": "Pod status",
       "gridPos": { "x": 0, "y": 0, "w": 24, "h": 8 },
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "datasource": { "type": "prometheus" },
       "targets": [
         {
           "refId": "A",
@@ -69,7 +69,7 @@
       "type": "timeseries",
       "title": "CPU usage by pod",
       "gridPos": { "x": 0, "y": 8, "w": 24, "h": 8 },
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "datasource": { "type": "prometheus" },
       "targets": [
         {
           "refId": "A",
@@ -97,7 +97,7 @@
       "type": "timeseries",
       "title": "Memory usage by pod",
       "gridPos": { "x": 0, "y": 16, "w": 24, "h": 8 },
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "datasource": { "type": "prometheus" },
       "targets": [
         {
           "refId": "A",
@@ -125,7 +125,7 @@
       "type": "timeseries",
       "title": "Network I/O by pod",
       "gridPos": { "x": 0, "y": 24, "w": 24, "h": 8 },
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "datasource": { "type": "prometheus" },
       "targets": [
         {
           "refId": "A",
