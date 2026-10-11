@@ -1,0 +1,13 @@
+apiVersion: v1alpha1
+kind: LinkConfig
+name: ens18
+addresses:
+    - address: 10.0.30.21/24
+routes:
+    - gateway: 10.0.30.1
+---
+apiVersion: v1alpha1
+kind: HostnameConfig
+auto:
+    $patch: delete
+hostname: talos-w-1

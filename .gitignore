@@ -223,3 +223,6 @@ __marimo__/
 
 # Kubernetes secrets
 k8s/*-secret.yaml
+
+# Tofu secrets
+*.tfvars

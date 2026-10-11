@@ -150,7 +150,7 @@ auto: stable # A method to automatically generate a hostname for the machine.
 apiVersion: v1alpha1
 kind: KubeClusterConfig
 clusterName: dexter # The cluster name.
-endpoint: https://10.0.30.9:6443 # The Kubernetes API endpoint.
+endpoint: https://10.0.30.10:6443 # The Kubernetes API endpoint.
 ---
 apiVersion: v1alpha1
 kind: KubeNodeConfig

@@ -1,0 +1,80 @@
+- name: Provision Talos nodes with static IPs
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  # Usage:
+  #   ansible-playbook playbooks/talos-provision.yml \
+  #     -e 'dhcp_cp1=x.x.x.x dhcp_cp2=x.x.x.x dhcp_cp3=x.x.x.x dhcp_w1=x.x.x.x dhcp_w2=x.x.x.x'
+  #
+  # Run once after tofu apply. Pass DHCP IPs from the Proxmox console.
+  # Applies machine configs with per-node patches (static IP, hostname, VIP)
+  # and waits for nodes to reboot onto their static IPs.
+
+  vars:
+    talos_dir: "{{ lookup('env', 'HOME') }}/repos/homelab/talos"
+    patches_dir: "{{ talos_dir }}/patches"
+    talosconfig: "{{ talos_dir }}/talosconfig"
+    controlplane_config: "{{ talos_dir }}/controlplane.yaml"
+    worker_config: "{{ talos_dir }}/worker.yaml"
+
+    nodes:
+      - name: cp-1
+        ip: 10.0.30.11
+        dhcp_ip: "{{ dhcp_cp1 }}"
+        role: controlplane
+      - name: cp-2
+        ip: 10.0.30.12
+        dhcp_ip: "{{ dhcp_cp2 }}"
+        role: controlplane
+      - name: cp-3
+        ip: 10.0.30.13
+        dhcp_ip: "{{ dhcp_cp3 }}"
+        role: controlplane
+      - name: w-1
+        ip: 10.0.30.21
+        dhcp_ip: "{{ dhcp_w1 }}"
+        role: worker
+      - name: w-2
+        ip: 10.0.30.22
+        dhcp_ip: "{{ dhcp_w2 }}"
+        role: worker
+
+  tasks:
+    - name: Wait for nodes to be reachable on DHCP IPs
+      ansible.builtin.wait_for:
+        host: "{{ item.dhcp_ip }}"
+        port: 50000
+        timeout: 300
+      loop: "{{ nodes }}"
+      loop_control:
+        label: "{{ item.name }} ({{ item.dhcp_ip }})"
+
+    - name: Apply config to each node
+      ansible.builtin.command: >
+        talosctl apply-config
+        --talosconfig {{ talosconfig }}
+        --nodes {{ item.dhcp_ip }}
+        --insecure
+        --file {{ controlplane_config if item.role == 'controlplane' else worker_config }}
+        --config-patch @{{ patches_dir }}/{{ item.name }}.yaml
+      loop: "{{ nodes }}"
+      loop_control:
+        label: "{{ item.name }} ({{ item.dhcp_ip }} -> {{ item.ip }})"
+
+    - name: Wait for nodes to install and reboot
+      ansible.builtin.pause:
+        seconds: 120
+        prompt: "Waiting for Talos to install to disk and reboot..."
+
+    - name: Wait for nodes on static IPs
+      ansible.builtin.wait_for:
+        host: "{{ item.ip }}"
+        port: 50000
+        timeout: 300
+      loop: "{{ nodes }}"
+      loop_control:
+        label: "{{ item.name }} ({{ item.ip }})"
+
+    - name: Provision complete
+      ansible.builtin.debug:
+        msg: "All nodes are on static IPs. Run talos-bootstrap.yml next."
