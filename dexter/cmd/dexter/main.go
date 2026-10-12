@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	pb "github.com/taylormeador/homelab/dexter/internal/gen/platform/v1"
+	pb "github.com/taylormeador/homelab/dexter/internal/gen/dexter/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
@@ -22,7 +22,7 @@ func main() {
 	}
 	defer conn.Close()
 
-	client := pb.NewPlatformServiceClient(conn)
+	client := pb.NewDexterClient(conn)
 
 	msg := "hello"
 	if len(os.Args) > 1 {

@@ -1,10 +1,10 @@
 syntax = "proto3";
 
-package platform.v1;
+package dexter.v1;
 
-option go_package = "github.com/taylormeador/homelab/dexter/internal/gen/platform/v1";
+option go_package = "github.com/taylormeador/homelab/dexter/internal/gen/dexter/v1";
 
-service PlatformService {
+service Dexter {
   rpc Ping(PingRequest) returns (PingResponse);
 }
 

@@ -6,12 +6,12 @@ import (
 	"log"
 	"net"
 
-	pb "github.com/taylormeador/homelab/dexter/internal/gen/platform/v1"
+	pb "github.com/taylormeador/homelab/dexter/internal/gen/dexter/v1"
 	"google.golang.org/grpc"
 )
 
 type server struct {
-	pb.UnimplementedPlatformServiceServer
+	pb.UnimplementedDexterServer
 }
 
 func (s *server) Ping(ctx context.Context, req *pb.PingRequest) (*pb.PingResponse, error) {
@@ -28,7 +28,7 @@ func main() {
 	}
 
 	grpcServer := grpc.NewServer()
-	pb.RegisterPlatformServiceServer(grpcServer, &server{})
+	pb.RegisterDexterServer(grpcServer, &server{})
 
 	log.Println("dexterd listening on :50051")
 	if err := grpcServer.Serve(listener); err != nil {

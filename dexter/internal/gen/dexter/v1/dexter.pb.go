@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.12
 // 	protoc        v7.36.2
-// source: platform/v1/platform.proto
+// source: dexter/v1/dexter.proto
 
 package v1
 
@@ -30,7 +30,7 @@ type PingRequest struct {
 
 func (x *PingRequest) Reset() {
 	*x = PingRequest{}
-	mi := &file_platform_v1_platform_proto_msgTypes[0]
+	mi := &file_dexter_v1_dexter_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -42,7 +42,7 @@ func (x *PingRequest) String() string {
 func (*PingRequest) ProtoMessage() {}
 
 func (x *PingRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_platform_v1_platform_proto_msgTypes[0]
+	mi := &file_dexter_v1_dexter_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -55,7 +55,7 @@ func (x *PingRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PingRequest.ProtoReflect.Descriptor instead.
 func (*PingRequest) Descriptor() ([]byte, []int) {
-	return file_platform_v1_platform_proto_rawDescGZIP(), []int{0}
+	return file_dexter_v1_dexter_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *PingRequest) GetMessage() string {
@@ -74,7 +74,7 @@ type PingResponse struct {
 
 func (x *PingResponse) Reset() {
 	*x = PingResponse{}
-	mi := &file_platform_v1_platform_proto_msgTypes[1]
+	mi := &file_dexter_v1_dexter_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -86,7 +86,7 @@ func (x *PingResponse) String() string {
 func (*PingResponse) ProtoMessage() {}
 
 func (x *PingResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_platform_v1_platform_proto_msgTypes[1]
+	mi := &file_dexter_v1_dexter_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -99,7 +99,7 @@ func (x *PingResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PingResponse.ProtoReflect.Descriptor instead.
 func (*PingResponse) Descriptor() ([]byte, []int) {
-	return file_platform_v1_platform_proto_rawDescGZIP(), []int{1}
+	return file_dexter_v1_dexter_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *PingResponse) GetMessage() string {
@@ -109,38 +109,38 @@ func (x *PingResponse) GetMessage() string {
 	return ""
 }
 
-var File_platform_v1_platform_proto protoreflect.FileDescriptor
+var File_dexter_v1_dexter_proto protoreflect.FileDescriptor
 
-const file_platform_v1_platform_proto_rawDesc = "" +
+const file_dexter_v1_dexter_proto_rawDesc = "" +
 	"\n" +
-	"\x1aplatform/v1/platform.proto\x12\vplatform.v1\"'\n" +
+	"\x16dexter/v1/dexter.proto\x12\tdexter.v1\"'\n" +
 	"\vPingRequest\x12\x18\n" +
 	"\amessage\x18\x01 \x01(\tR\amessage\"(\n" +
 	"\fPingResponse\x12\x18\n" +
-	"\amessage\x18\x01 \x01(\tR\amessage2N\n" +
-	"\x0fPlatformService\x12;\n" +
-	"\x04Ping\x12\x18.platform.v1.PingRequest\x1a\x19.platform.v1.PingResponseBAZ?github.com/taylormeador/homelab/dexter/internal/gen/platform/v1b\x06proto3"
+	"\amessage\x18\x01 \x01(\tR\amessage2A\n" +
+	"\x06Dexter\x127\n" +
+	"\x04Ping\x12\x16.dexter.v1.PingRequest\x1a\x17.dexter.v1.PingResponseB?Z=github.com/taylormeador/homelab/dexter/internal/gen/dexter/v1b\x06proto3"
 
 var (
-	file_platform_v1_platform_proto_rawDescOnce sync.Once
-	file_platform_v1_platform_proto_rawDescData []byte
+	file_dexter_v1_dexter_proto_rawDescOnce sync.Once
+	file_dexter_v1_dexter_proto_rawDescData []byte
 )
 
-func file_platform_v1_platform_proto_rawDescGZIP() []byte {
-	file_platform_v1_platform_proto_rawDescOnce.Do(func() {
-		file_platform_v1_platform_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_platform_v1_platform_proto_rawDesc), len(file_platform_v1_platform_proto_rawDesc)))
+func file_dexter_v1_dexter_proto_rawDescGZIP() []byte {
+	file_dexter_v1_dexter_proto_rawDescOnce.Do(func() {
+		file_dexter_v1_dexter_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_dexter_v1_dexter_proto_rawDesc), len(file_dexter_v1_dexter_proto_rawDesc)))
 	})
-	return file_platform_v1_platform_proto_rawDescData
+	return file_dexter_v1_dexter_proto_rawDescData
 }
 
-var file_platform_v1_platform_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
-var file_platform_v1_platform_proto_goTypes = []any{
-	(*PingRequest)(nil),  // 0: platform.v1.PingRequest
-	(*PingResponse)(nil), // 1: platform.v1.PingResponse
+var file_dexter_v1_dexter_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_dexter_v1_dexter_proto_goTypes = []any{
+	(*PingRequest)(nil),  // 0: dexter.v1.PingRequest
+	(*PingResponse)(nil), // 1: dexter.v1.PingResponse
 }
-var file_platform_v1_platform_proto_depIdxs = []int32{
-	0, // 0: platform.v1.PlatformService.Ping:input_type -> platform.v1.PingRequest
-	1, // 1: platform.v1.PlatformService.Ping:output_type -> platform.v1.PingResponse
+var file_dexter_v1_dexter_proto_depIdxs = []int32{
+	0, // 0: dexter.v1.Dexter.Ping:input_type -> dexter.v1.PingRequest
+	1, // 1: dexter.v1.Dexter.Ping:output_type -> dexter.v1.PingResponse
 	1, // [1:2] is the sub-list for method output_type
 	0, // [0:1] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
@@ -148,26 +148,26 @@ var file_platform_v1_platform_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for field type_name
 }
 
-func init() { file_platform_v1_platform_proto_init() }
-func file_platform_v1_platform_proto_init() {
-	if File_platform_v1_platform_proto != nil {
+func init() { file_dexter_v1_dexter_proto_init() }
+func file_dexter_v1_dexter_proto_init() {
+	if File_dexter_v1_dexter_proto != nil {
 		return
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_platform_v1_platform_proto_rawDesc), len(file_platform_v1_platform_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_dexter_v1_dexter_proto_rawDesc), len(file_dexter_v1_dexter_proto_rawDesc)),
 			NumEnums:      0,
 			NumMessages:   2,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
-		GoTypes:           file_platform_v1_platform_proto_goTypes,
-		DependencyIndexes: file_platform_v1_platform_proto_depIdxs,
-		MessageInfos:      file_platform_v1_platform_proto_msgTypes,
+		GoTypes:           file_dexter_v1_dexter_proto_goTypes,
+		DependencyIndexes: file_dexter_v1_dexter_proto_depIdxs,
+		MessageInfos:      file_dexter_v1_dexter_proto_msgTypes,
 	}.Build()
-	File_platform_v1_platform_proto = out.File
-	file_platform_v1_platform_proto_goTypes = nil
-	file_platform_v1_platform_proto_depIdxs = nil
+	File_dexter_v1_dexter_proto = out.File
+	file_dexter_v1_dexter_proto_goTypes = nil
+	file_dexter_v1_dexter_proto_depIdxs = nil
 }
