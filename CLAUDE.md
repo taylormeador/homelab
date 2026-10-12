@@ -54,14 +54,24 @@ Each host has its own `.env` with API credentials, loaded automatically by diren
 
 **Talos k8s cluster:** "dexter" on VLAN 30. VMs provisioned and configured by OpenTofu (`tofu/talos/`), cluster services (Longhorn, ArgoCD) installed by Ansible (`ansible/playbooks/talos-setup.yml`). Apps deployed via ArgoCD gitops — manifests in `k8s/<app>/`, ArgoCD Applications in `k8s/argocd/`. Root app auto-syncs everything in `k8s/argocd/`.
 
+**k8s in-cluster monitoring:** Self-contained stack in `monitoring` namespace, independent from lab monitoring. Alloy (DaemonSet) → Prometheus + Loki ← Grafana. Dashboards are JSON in `k8s/monitoring/dashboards/`, wrapped as ConfigMaps by Kustomize, loaded by Grafana sidecar. All deployed via ArgoCD Helm Applications.
+
 ## Key Conventions
 
+### Lab infrastructure (monitoring-ct)
 - **Grafana dashboards** are hand-authored JSON in `grafana/dashboards/`. The provisioner auto-loads any `.json` file from `/var/lib/grafana/dashboards/`.
 - **Alerting rules** are in `grafana/provisioning/alerting/homelab.yml` (Grafana unified alerting format, not Prometheus alertrules).
 - **Blackbox modules** (`prometheus/blackbox.yml`): `http_2xx` for plain HTTP, `http_2xx_insecure` for HTTPS with self-signed certs (Proxmox UIs), `tcp_connect` for port checks.
 - **Target files** use a `service` label for blackbox probes. Host metrics come from Alloy via remote_write with a `host` label.
+
+### k8s platform (in-cluster)
+- **ArgoCD Applications** live in `k8s/argocd/`. Root app auto-syncs this directory. Adding an app = add YAML here + manifests in `k8s/<app>/`, commit and push.
+- **k8s Grafana dashboards** are JSON in `k8s/monitoring/dashboards/`. Kustomize generates labeled ConfigMaps; Grafana sidecar auto-loads them. Reference datasources by type only (`{"type": "prometheus"}`), not UID.
+- **Helm apps** (Alloy, Prometheus, Loki, Grafana) are configured inline in their ArgoCD Application YAMLs via `valuesObject`.
+
+### General
 - **Ansible vault** stores OPNsense API credentials. Always pass `--ask-vault-pass` when running playbooks.
-- All hosts are on the `10.0.10.0/24` network.
+- All hosts are on the `10.0.10.0/24` network. Talos cluster is on `10.0.30.0/24` (VLAN 30).
 
 ## Network and DNS
 
