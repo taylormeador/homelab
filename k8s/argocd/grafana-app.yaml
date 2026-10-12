@@ -11,6 +11,8 @@ spec:
     targetRevision: "10.5.15"
     helm:
       valuesObject:
+        deploymentStrategy:
+          type: Recreate
         persistence:
           enabled: true
           size: 5Gi
