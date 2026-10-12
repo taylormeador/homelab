@@ -48,7 +48,7 @@
       ],
       "transformations": [
         { "id": "organize", "options": {
-          "excludeByName": { "Time": true, "__name__": true, "job": true, "uid": true, "instance": true },
+          "excludeByName": { "Time": true, "__name__": true, "job": true, "uid": true, "instance": true, "node": true },
           "renameByName": { "namespace": "Namespace", "pod": "Pod", "phase": "Phase" }
         }}
       ],

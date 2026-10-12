@@ -23,6 +23,8 @@ spec:
                 type: prometheus
                 url: http://prometheus-server.monitoring.svc:80
                 isDefault: true
+                jsonData:
+                  timeInterval: "60s"
               - name: Loki
                 type: loki
                 url: http://loki-gateway.monitoring.svc:80
