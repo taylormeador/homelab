@@ -226,3 +226,7 @@ k8s/*-secret.yaml
 
 # Tofu secrets
 *.tfvars
+
+# Go
+dexter/dexter
+dexter/dexterd
