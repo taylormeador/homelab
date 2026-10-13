@@ -17,6 +17,8 @@ spec:
       labels:
         app: dexterd
     spec:
+      imagePullSecrets:
+        - name: ghcr-pull
       containers:
         - name: dexterd
           image: ghcr.io/taylormeador/dexterd:latest
