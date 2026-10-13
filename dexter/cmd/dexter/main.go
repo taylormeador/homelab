@@ -38,4 +38,11 @@ func main() {
 	}
 
 	fmt.Println(resp.Message)
+
+	respTwo, err := client.CreateMinecraftWorld(ctx, &pb.CreateMinecraftWorldRequest{Message: msg})
+	if err != nil {
+		log.Fatalf("CreateMinecraftWorld failed: %v", err)
+	}
+
+	fmt.Println(respTwo.Message)
 }

@@ -109,6 +109,94 @@ func (x *PingResponse) GetMessage() string {
 	return ""
 }
 
+type CreateMinecraftWorldRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Message       string                 `protobuf:"bytes,1,opt,name=message,proto3" json:"message,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateMinecraftWorldRequest) Reset() {
+	*x = CreateMinecraftWorldRequest{}
+	mi := &file_dexter_v1_dexter_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateMinecraftWorldRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateMinecraftWorldRequest) ProtoMessage() {}
+
+func (x *CreateMinecraftWorldRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_dexter_v1_dexter_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateMinecraftWorldRequest.ProtoReflect.Descriptor instead.
+func (*CreateMinecraftWorldRequest) Descriptor() ([]byte, []int) {
+	return file_dexter_v1_dexter_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *CreateMinecraftWorldRequest) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
+type CreateMinecraftWorldResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Message       string                 `protobuf:"bytes,1,opt,name=message,proto3" json:"message,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateMinecraftWorldResponse) Reset() {
+	*x = CreateMinecraftWorldResponse{}
+	mi := &file_dexter_v1_dexter_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateMinecraftWorldResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateMinecraftWorldResponse) ProtoMessage() {}
+
+func (x *CreateMinecraftWorldResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_dexter_v1_dexter_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateMinecraftWorldResponse.ProtoReflect.Descriptor instead.
+func (*CreateMinecraftWorldResponse) Descriptor() ([]byte, []int) {
+	return file_dexter_v1_dexter_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *CreateMinecraftWorldResponse) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
 var File_dexter_v1_dexter_proto protoreflect.FileDescriptor
 
 const file_dexter_v1_dexter_proto_rawDesc = "" +
@@ -117,9 +205,14 @@ const file_dexter_v1_dexter_proto_rawDesc = "" +
 	"\vPingRequest\x12\x18\n" +
 	"\amessage\x18\x01 \x01(\tR\amessage\"(\n" +
 	"\fPingResponse\x12\x18\n" +
-	"\amessage\x18\x01 \x01(\tR\amessage2A\n" +
+	"\amessage\x18\x01 \x01(\tR\amessage\"7\n" +
+	"\x1bCreateMinecraftWorldRequest\x12\x18\n" +
+	"\amessage\x18\x01 \x01(\tR\amessage\"8\n" +
+	"\x1cCreateMinecraftWorldResponse\x12\x18\n" +
+	"\amessage\x18\x01 \x01(\tR\amessage2\xaa\x01\n" +
 	"\x06Dexter\x127\n" +
-	"\x04Ping\x12\x16.dexter.v1.PingRequest\x1a\x17.dexter.v1.PingResponseB?Z=github.com/taylormeador/homelab/dexter/internal/gen/dexter/v1b\x06proto3"
+	"\x04Ping\x12\x16.dexter.v1.PingRequest\x1a\x17.dexter.v1.PingResponse\x12g\n" +
+	"\x14CreateMinecraftWorld\x12&.dexter.v1.CreateMinecraftWorldRequest\x1a'.dexter.v1.CreateMinecraftWorldResponseB?Z=github.com/taylormeador/homelab/dexter/internal/gen/dexter/v1b\x06proto3"
 
 var (
 	file_dexter_v1_dexter_proto_rawDescOnce sync.Once
@@ -133,16 +226,20 @@ func file_dexter_v1_dexter_proto_rawDescGZIP() []byte {
 	return file_dexter_v1_dexter_proto_rawDescData
 }
 
-var file_dexter_v1_dexter_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_dexter_v1_dexter_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_dexter_v1_dexter_proto_goTypes = []any{
-	(*PingRequest)(nil),  // 0: dexter.v1.PingRequest
-	(*PingResponse)(nil), // 1: dexter.v1.PingResponse
+	(*PingRequest)(nil),                  // 0: dexter.v1.PingRequest
+	(*PingResponse)(nil),                 // 1: dexter.v1.PingResponse
+	(*CreateMinecraftWorldRequest)(nil),  // 2: dexter.v1.CreateMinecraftWorldRequest
+	(*CreateMinecraftWorldResponse)(nil), // 3: dexter.v1.CreateMinecraftWorldResponse
 }
 var file_dexter_v1_dexter_proto_depIdxs = []int32{
 	0, // 0: dexter.v1.Dexter.Ping:input_type -> dexter.v1.PingRequest
-	1, // 1: dexter.v1.Dexter.Ping:output_type -> dexter.v1.PingResponse
-	1, // [1:2] is the sub-list for method output_type
-	0, // [0:1] is the sub-list for method input_type
+	2, // 1: dexter.v1.Dexter.CreateMinecraftWorld:input_type -> dexter.v1.CreateMinecraftWorldRequest
+	1, // 2: dexter.v1.Dexter.Ping:output_type -> dexter.v1.PingResponse
+	3, // 3: dexter.v1.Dexter.CreateMinecraftWorld:output_type -> dexter.v1.CreateMinecraftWorldResponse
+	2, // [2:4] is the sub-list for method output_type
+	0, // [0:2] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -159,7 +256,7 @@ func file_dexter_v1_dexter_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_dexter_v1_dexter_proto_rawDesc), len(file_dexter_v1_dexter_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   2,
+			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

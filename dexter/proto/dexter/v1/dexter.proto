@@ -6,6 +6,7 @@ option go_package = "github.com/taylormeador/homelab/dexter/internal/gen/dexter/
 
 service Dexter {
   rpc Ping(PingRequest) returns (PingResponse);
+  rpc CreateMinecraftWorld(CreateMinecraftWorldRequest) returns (CreateMinecraftWorldResponse);
 }
 
 message PingRequest {
@@ -13,5 +14,13 @@ message PingRequest {
 }
 
 message PingResponse {
+  string message = 1;
+}
+
+message CreateMinecraftWorldRequest {
+  string message = 1;
+}
+
+message CreateMinecraftWorldResponse {
   string message = 1;
 }
