@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dexterd
+  namespace: dexter
+  labels:
+    app: dexterd
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: dexterd
+  template:
+    metadata:
+      labels:
+        app: dexterd
+    spec:
+      containers:
+        - name: dexterd
+          image: ghcr.io/taylormeador/dexterd:latest
+          ports:
+            - containerPort: 50051
+          env:
+            - name: GITHUB_REPO_URL
+              value: "https://github.com/taylormeador/homelab.git"
+            - name: LOCAL_REPO_DIR
+              value: "/tmp/homelab"
+            - name: GITHUB_ACCESS_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: dexter-secrets
+                  key: github-access-token
+            - name: ADMIN_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: dexter-secrets
+                  key: admin-api-key
+            - name: DEMO_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: dexter-secrets
+                  key: demo-api-key
+          resources:
+            requests:
+              memory: 64Mi
+              cpu: 50m
+            limits:
+              memory: 256Mi
+              cpu: 500m
