@@ -221,9 +221,9 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
-# Kubernetes secrets
-k8s/**/secret.yaml
-k8s/*-secret.yaml
+# Kubernetes secrets (sealed secrets are safe to commit)
+k8s/**/*secret*
+!k8s/**/sealed-*
 
 # Tofu secrets
 *.tfvars

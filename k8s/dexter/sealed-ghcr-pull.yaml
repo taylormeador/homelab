@@ -1,0 +1,16 @@
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  creationTimestamp: null
+  name: ghcr-pull
+  namespace: dexter
+spec:
+  encryptedData:
+    .dockerconfigjson: AgCWZdNHi0I1NwVGyD3/HL24FOzLOMTSx7MoQbAuGzHNGsL6lhENa/yyu+Pk1oezTjF0z1YHw2+k16CSiwTHz4aeekf4Yw/j1TwMP2oTp2L844VnazlJyY/7X6MTcCHw0ppgtpS7uSWZSIjJ5dGLgYH8F1tvAhvPtk+/I3CbAKJatlk4JgrQZKjhO28cXTqHEjIhaI4K1wx4nSyx5ax+tmuYnwafeR5Jmj6vNAAStWmzsq/Cy3u6asL485MvHVZ8GxBUz4eknBQp3loF7AJiy48JsHf8HuZGfFgYnUr9hkTomDqUpgoMUI8vo8VA+igpAsjfmH7t0QRvE66zbLuGi8zVKSTH4JdtUBueoLIOY6t044MkZ2OkjGe2UaA5BkryaWmOYzwqjWnp4QGUGKWRe4P3T/qdJrSWXaOD5+qAqlJHibpIX+M3nczpUo6rsgOo3dcgXWnkod4Iiwqa/A4jc4bULA/GZNqWKsOoBGtdh2wMzKI+53fvEwqfvE1MopDlm7dGGP8t1RkxlTsMDSPK+J0c2P0PWcEqHEmRmtswf2+1DGOXEuzrj2yi6W1CezjHk8gszpVVq9FHh+Wk5yvnAUQa94dxponPKyO94LSYZ8bH8yTXtCcInO3h4rHlbyTOA2+k1WyGrzgKM6VSPha6jUkSPrW3o5y39HPtMnIAsf6+oZ00F8ZxN3dI/KVoSMZjOfrMqdXQks0Q6GCPjpRU213guMJLG1kyEg7q9kmi2ziz+JUZe1KY1Z5X6RNb26dXDLK5I32ZDRWVqovb/UZRc/AQA7tnFw7VaorD99Xq5Gs+YhA6bmeXWe5kpo0z/4UIHEqrBxp5qk6EqkhUljzcy5LqndEVedfpMNclIk29/sh2n8bb+Hfnd3A7kaE30yks45B3AoM6M4B8a6M0A8EL9KJUqTl35mFBJK9KJ/lQPWLcpe+KaPbGEn3ueA==
+  template:
+    metadata:
+      creationTimestamp: null
+      name: ghcr-pull
+      namespace: dexter
+    type: kubernetes.io/dockerconfigjson
