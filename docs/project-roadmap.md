@@ -2,17 +2,14 @@
 
 Ideas and future work for the homelab platform. Pick up where it makes sense.
 
-## Phase 1: Kubernetes (Talos) + ArgoCD
+## Phase 1: Kubernetes (Talos) + ArgoCD ✓
 
-Stand up a Talos k8s cluster on Proxmox VMs with ArgoCD for GitOps deployments. Set up manually first to learn the pain points, then codify with tofu later.
-
-- Talos Linux VMs on Proxmox (own VLAN, e.g. VLAN 30)
-- Longhorn for persistent storage (dedicated virtual disks per node)
-- ArgoCD watches GitOps repos, deploys apps from manifests/Helm charts
-- Alloy DaemonSet for metrics + logs to existing Prometheus/Loki (firewall rule from k8s VLAN to monitoring-ct)
-- Ingress controller + Cloudflare tunnel for external access
-- OPNsense firewall rules for inter-VLAN routing to k8s
-- Once stable, rebuild with tofu for the production setup
+- Talos Linux cluster on Proxmox (VLAN 30), provisioned with OpenTofu
+- Longhorn for persistent storage on worker nodes
+- ArgoCD app-of-apps pattern for GitOps deployments
+- In-cluster monitoring stack (Alloy, Prometheus, Loki, Grafana) via ArgoCD Helm apps
+- Sealed Secrets for encrypted secret management in git
+- Container images on ghcr.io, pulled via imagePullSecrets
 
 ## Phase 2: Go CLI + API Server
 

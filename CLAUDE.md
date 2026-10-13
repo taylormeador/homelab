@@ -70,8 +70,24 @@ Each host has its own `.env` with API credentials, loaded automatically by diren
 - **Helm apps** (Alloy, Prometheus, Loki, Grafana) are configured inline in their ArgoCD Application YAMLs via `valuesObject`.
 
 ### General
+- **Sealed Secrets** encrypt k8s secrets for safe git storage. Controller runs in `kube-system`, decrypts SealedSecret resources into regular Secrets. Create with: `kubectl create secret ... --dry-run=client -o yaml | kubeseal --controller-name sealed-secrets --controller-namespace kube-system -o yaml`
+- **Container images** are built with Podman on dev-ct (`sudo podman build`) and pushed to `ghcr.io/taylormeador/`. Clusters pull via `imagePullSecrets` referencing a sealed `ghcr-pull` secret.
 - **Ansible vault** stores OPNsense API credentials. Always pass `--ask-vault-pass` when running playbooks.
 - All hosts are on the `10.0.10.0/24` network. Talos cluster is on `10.0.30.0/24` (VLAN 30).
+
+## Dexter (API Server + CLI)
+
+Go gRPC API server (`dexter/cmd/dexterd/`) and CLI (`dexter/cmd/dexter/`). Proto definitions in `dexter/proto/dexter/v1/dexter.proto`, generated code in `dexter/internal/gen/`. Server logic in `dexter/internal/server/`.
+
+Build and deploy:
+```bash
+cd dexter
+sudo podman build -t ghcr.io/taylormeador/dexterd:latest .
+sudo podman login ghcr.io -u taylormeador --password-stdin
+sudo podman push ghcr.io/taylormeador/dexterd:latest
+```
+
+k8s manifests in `k8s/dexter/`, ArgoCD app in `k8s/argocd/dexter-app.yaml`. Environment variables loaded via direnv (`.envrc` → `.env`) locally, k8s Secrets in cluster.
 
 ## Network and DNS
 
