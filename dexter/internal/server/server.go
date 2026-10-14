@@ -18,9 +18,24 @@ func (s *Server) Ping(ctx context.Context, req *pb.PingRequest) (*pb.PingRespons
 }
 
 func (s *Server) CreateMinecraftWorld(ctx context.Context, req *pb.CreateMinecraftWorldRequest) (*pb.CreateMinecraftWorldResponse, error) {
-	// TODO create yaml file, commit to git, push.
+	var index int
+	if req.Index != nil {
+		index = int(req.GetIndex())
+	} else {
+		var err error
+		index, err = getNextWorldIndex()
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	if err := createMinecraftYAML(index); err != nil {
+		return nil, err
+	}
+
+	// TODO commit and push
 
 	return &pb.CreateMinecraftWorldResponse{
-		Message: fmt.Sprintf("received CreateMinecraftWorld request: %s", req.Message),
+		Message: fmt.Sprintf("created minecraft-%d", index),
 	}, nil
 }

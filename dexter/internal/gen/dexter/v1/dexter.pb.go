@@ -111,7 +111,7 @@ func (x *PingResponse) GetMessage() string {
 
 type CreateMinecraftWorldRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Message       string                 `protobuf:"bytes,1,opt,name=message,proto3" json:"message,omitempty"`
+	Index         *int32                 `protobuf:"varint,1,opt,name=index,proto3,oneof" json:"index,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -146,11 +146,11 @@ func (*CreateMinecraftWorldRequest) Descriptor() ([]byte, []int) {
 	return file_dexter_v1_dexter_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *CreateMinecraftWorldRequest) GetMessage() string {
-	if x != nil {
-		return x.Message
+func (x *CreateMinecraftWorldRequest) GetIndex() int32 {
+	if x != nil && x.Index != nil {
+		return *x.Index
 	}
-	return ""
+	return 0
 }
 
 type CreateMinecraftWorldResponse struct {
@@ -205,9 +205,10 @@ const file_dexter_v1_dexter_proto_rawDesc = "" +
 	"\vPingRequest\x12\x18\n" +
 	"\amessage\x18\x01 \x01(\tR\amessage\"(\n" +
 	"\fPingResponse\x12\x18\n" +
-	"\amessage\x18\x01 \x01(\tR\amessage\"7\n" +
-	"\x1bCreateMinecraftWorldRequest\x12\x18\n" +
-	"\amessage\x18\x01 \x01(\tR\amessage\"8\n" +
+	"\amessage\x18\x01 \x01(\tR\amessage\"B\n" +
+	"\x1bCreateMinecraftWorldRequest\x12\x19\n" +
+	"\x05index\x18\x01 \x01(\x05H\x00R\x05index\x88\x01\x01B\b\n" +
+	"\x06_index\"8\n" +
 	"\x1cCreateMinecraftWorldResponse\x12\x18\n" +
 	"\amessage\x18\x01 \x01(\tR\amessage2\xaa\x01\n" +
 	"\x06Dexter\x127\n" +
@@ -250,6 +251,7 @@ func file_dexter_v1_dexter_proto_init() {
 	if File_dexter_v1_dexter_proto != nil {
 		return
 	}
+	file_dexter_v1_dexter_proto_msgTypes[2].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{

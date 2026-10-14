@@ -79,7 +79,19 @@ Each host has its own `.env` with API credentials, loaded automatically by diren
 
 Go gRPC API server (`dexter/cmd/dexterd/`) and CLI (`dexter/cmd/dexter/`). Proto definitions in `dexter/proto/dexter/v1/dexter.proto`, generated code in `dexter/internal/gen/`. Server logic in `dexter/internal/server/`.
 
-Build and deploy:
+Regenerate protobuf code:
+```bash
+cd dexter
+protoc --proto_path=proto --go_out=internal/gen --go_opt=module=github.com/taylormeador/homelab/dexter/internal/gen --go-grpc_out=internal/gen --go-grpc_opt=module=github.com/taylormeador/homelab/dexter/internal/gen proto/dexter/v1/dexter.proto
+```
+
+Build CLI locally:
+```bash
+cd dexter
+go build -o ~/.local/bin/dexter ./cmd/dexter/
+```
+
+Build and deploy server:
 ```bash
 cd dexter
 sudo podman build -t ghcr.io/taylormeador/dexterd:latest .
