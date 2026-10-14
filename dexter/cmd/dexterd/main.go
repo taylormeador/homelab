@@ -10,12 +10,22 @@ import (
 	"google.golang.org/grpc"
 )
 
-func main() {
-	url := os.Getenv("GITHUB_REPO_URL")
-	token := os.Getenv("GITHUB_ACCESS_TOKEN")
-	directory := os.Getenv("LOCAL_REPO_DIR")
+func mustEnv(key string) string {
+	val := os.Getenv(key)
+	if val == "" {
+		log.Fatalf("required environment variable %s is not set", key)
+	}
+	return val
+}
 
-	server.CloneRepo(url, directory, token)
+func main() {
+	url := mustEnv("GITHUB_REPO_URL")
+	token := mustEnv("GITHUB_ACCESS_TOKEN")
+	directory := mustEnv("LOCAL_REPO_DIR")
+
+	if err := server.CloneRepo(url, directory, token); err != nil {
+		log.Fatalf("failed to clone repo: %v", err)
+	}
 
 	listener, err := net.Listen("tcp", ":50051")
 	if err != nil {

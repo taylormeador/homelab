@@ -9,10 +9,10 @@ import (
 	"github.com/go-git/go-git/v6/plumbing/transport/http"
 )
 
-func CloneRepo(url string, directory string, token string) {
+func CloneRepo(url string, directory string, token string) error {
 	err := os.RemoveAll(directory)
 	if err != nil {
-		log.Fatalf("Error deleting directory: %v\n", err)
+		return err
 	}
 
 	r, err := git.PlainClone(directory, &git.CloneOptions{
@@ -26,18 +26,18 @@ func CloneRepo(url string, directory string, token string) {
 		},
 	})
 	if err != nil {
-		log.Fatalf("error cloning repo: %s", err.Error())
+		return err
 	}
 	defer func() { _ = r.Close() }()
 
 	ref, err := r.Head()
 	if err != nil {
-		log.Fatalf("error getting head: %s", err.Error())
+		return err
 	}
 
 	commit, err := r.CommitObject(ref.Hash())
 	if err != nil {
-		log.Fatalf("error while getting commit: %s", err.Error())
+		return err
 	}
 
 	log.Println(commit)
