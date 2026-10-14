@@ -32,7 +32,10 @@ func main() {
 		log.Fatalf("failed to listen: %v", err)
 	}
 
-	grpcServer := grpc.NewServer(grpc.UnaryInterceptor(server.LoggingInterceptor))
+	adminKey := mustEnv("ADMIN_API_KEY")
+	demoKey := mustEnv("DEMO_API_KEY")
+
+	grpcServer := grpc.NewServer(grpc.ChainUnaryInterceptor(server.LoggingInterceptor, server.NewAuthInterceptor(adminKey, demoKey)))
 	pb.RegisterDexterServer(grpcServer, &server.Server{})
 
 	log.Println("dexterd listening on :50051")

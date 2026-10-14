@@ -11,9 +11,34 @@ import (
 	pb "github.com/taylormeador/homelab/dexter/internal/gen/dexter/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/metadata"
 )
 
+func loadAPIKey() string {
+	if key := os.Getenv("DEXTER_API_KEY"); key != "" {
+		return key
+	}
+
+	home, err := os.UserHomeDir()
+	if err != nil {
+		log.Fatal("could not determine home directory")
+	}
+
+	data, err := os.ReadFile(home + "/.config/dexter/api-key")
+	if err != nil {
+		log.Fatal("DEXTER_API_KEY not set and ~/.config/dexter/api-key not found")
+	}
+
+	key := strings.TrimSpace(string(data))
+	if key == "" {
+		log.Fatal("~/.config/dexter/api-key is empty")
+	}
+
+	return key
+}
+
 func main() {
+	apiKey := loadAPIKey()
 	addr := "localhost:50051"
 
 	conn, err := grpc.NewClient(addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
@@ -32,6 +57,7 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
+	ctx = metadata.AppendToOutgoingContext(ctx, "authorization", apiKey)
 	resp, err := client.Ping(ctx, &pb.PingRequest{Message: msg})
 	if err != nil {
 		log.Fatalf("ping failed: %v", err)
