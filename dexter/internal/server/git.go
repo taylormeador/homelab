@@ -40,5 +40,7 @@ func CloneRepo(url string, directory string, token string) error {
 		return err
 	}
 
-	log.Println(commit)
+	log.Printf("cloned repo and checked out commit %s: %s", commit.Hash, commit.Message)
+
+	return nil
 }

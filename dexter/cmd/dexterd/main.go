@@ -32,7 +32,7 @@ func main() {
 		log.Fatalf("failed to listen: %v", err)
 	}
 
-	grpcServer := grpc.NewServer()
+	grpcServer := grpc.NewServer(grpc.UnaryInterceptor(server.LoggingInterceptor))
 	pb.RegisterDexterServer(grpcServer, &server.Server{})
 
 	log.Println("dexterd listening on :50051")
