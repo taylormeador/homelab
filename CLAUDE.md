@@ -97,6 +97,7 @@ cd dexter
 sudo podman build -t ghcr.io/taylormeador/dexterd:latest .
 sudo podman login ghcr.io -u taylormeador --password-stdin
 sudo podman push ghcr.io/taylormeador/dexterd:latest
+kubectl rollout restart deployment dexterd -n dexter
 ```
 
 k8s manifests in `k8s/dexter/`, ArgoCD app in `k8s/argocd/dexter-app.yaml`. Environment variables loaded via direnv (`.envrc` → `.env`) locally, k8s Secrets in cluster.
