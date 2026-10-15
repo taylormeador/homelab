@@ -6,9 +6,11 @@ metadata:
   labels:
     app: dexterd
 spec:
+  type: NodePort
   selector:
     app: dexterd
   ports:
     - port: 50051
       targetPort: 50051
+      nodePort: 30051
       protocol: TCP
