@@ -30,6 +30,17 @@
         ip: 10.0.10.116
       - hostname: monitoring-ct
         ip: 10.0.10.129
+      # Talos k8s cluster (VLAN 30)
+      - hostname: talos-cp-1
+        ip: 10.0.30.11
+      - hostname: talos-cp-2
+        ip: 10.0.30.12
+      - hostname: talos-cp-3
+        ip: 10.0.30.13
+      - hostname: talos-w-1
+        ip: 10.0.30.21
+      - hostname: talos-w-2
+        ip: 10.0.30.22
       # Service names (resolve to nginx reverse proxy)
       - hostname: jellyfin
         ip: 10.0.10.120
