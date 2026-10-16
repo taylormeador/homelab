@@ -22,6 +22,7 @@ const (
 	Dexter_Ping_FullMethodName                 = "/dexter.v1.Dexter/Ping"
 	Dexter_CreateMinecraftWorld_FullMethodName = "/dexter.v1.Dexter/CreateMinecraftWorld"
 	Dexter_DeleteMinecraftWorld_FullMethodName = "/dexter.v1.Dexter/DeleteMinecraftWorld"
+	Dexter_ListMinecraftWorlds_FullMethodName  = "/dexter.v1.Dexter/ListMinecraftWorlds"
 )
 
 // DexterClient is the client API for Dexter service.
@@ -31,6 +32,7 @@ type DexterClient interface {
 	Ping(ctx context.Context, in *PingRequest, opts ...grpc.CallOption) (*PingResponse, error)
 	CreateMinecraftWorld(ctx context.Context, in *CreateMinecraftWorldRequest, opts ...grpc.CallOption) (*CreateMinecraftWorldResponse, error)
 	DeleteMinecraftWorld(ctx context.Context, in *DeleteMinecraftWorldRequest, opts ...grpc.CallOption) (*DeleteMinecraftWorldResponse, error)
+	ListMinecraftWorlds(ctx context.Context, in *ListMinecraftWorldsRequest, opts ...grpc.CallOption) (*ListMinecraftWorldsResponse, error)
 }
 
 type dexterClient struct {
@@ -71,6 +73,16 @@ func (c *dexterClient) DeleteMinecraftWorld(ctx context.Context, in *DeleteMinec
 	return out, nil
 }
 
+func (c *dexterClient) ListMinecraftWorlds(ctx context.Context, in *ListMinecraftWorldsRequest, opts ...grpc.CallOption) (*ListMinecraftWorldsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListMinecraftWorldsResponse)
+	err := c.cc.Invoke(ctx, Dexter_ListMinecraftWorlds_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // DexterServer is the server API for Dexter service.
 // All implementations must embed UnimplementedDexterServer
 // for forward compatibility.
@@ -78,6 +90,7 @@ type DexterServer interface {
 	Ping(context.Context, *PingRequest) (*PingResponse, error)
 	CreateMinecraftWorld(context.Context, *CreateMinecraftWorldRequest) (*CreateMinecraftWorldResponse, error)
 	DeleteMinecraftWorld(context.Context, *DeleteMinecraftWorldRequest) (*DeleteMinecraftWorldResponse, error)
+	ListMinecraftWorlds(context.Context, *ListMinecraftWorldsRequest) (*ListMinecraftWorldsResponse, error)
 	mustEmbedUnimplementedDexterServer()
 }
 
@@ -96,6 +109,9 @@ func (UnimplementedDexterServer) CreateMinecraftWorld(context.Context, *CreateMi
 }
 func (UnimplementedDexterServer) DeleteMinecraftWorld(context.Context, *DeleteMinecraftWorldRequest) (*DeleteMinecraftWorldResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method DeleteMinecraftWorld not implemented")
+}
+func (UnimplementedDexterServer) ListMinecraftWorlds(context.Context, *ListMinecraftWorldsRequest) (*ListMinecraftWorldsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListMinecraftWorlds not implemented")
 }
 func (UnimplementedDexterServer) mustEmbedUnimplementedDexterServer() {}
 func (UnimplementedDexterServer) testEmbeddedByValue()                {}
@@ -172,6 +188,24 @@ func _Dexter_DeleteMinecraftWorld_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Dexter_ListMinecraftWorlds_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListMinecraftWorldsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DexterServer).ListMinecraftWorlds(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Dexter_ListMinecraftWorlds_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DexterServer).ListMinecraftWorlds(ctx, req.(*ListMinecraftWorldsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Dexter_ServiceDesc is the grpc.ServiceDesc for Dexter service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -190,6 +224,10 @@ var Dexter_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteMinecraftWorld",
 			Handler:    _Dexter_DeleteMinecraftWorld_Handler,
+		},
+		{
+			MethodName: "ListMinecraftWorlds",
+			Handler:    _Dexter_ListMinecraftWorlds_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

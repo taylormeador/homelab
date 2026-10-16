@@ -120,6 +120,24 @@ func (r *Repo) CreateMinecraftWorld(index *int32) (string, error) {
 	return worldName, nil
 }
 
+func (r *Repo) ListMinecraftWorlds() ([]string, error) {
+	path := filepath.Join(r.directory, "k8s/minecraft/worlds")
+	entries, err := os.ReadDir(path)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to read world files: %v", err)
+	}
+
+	var worlds []string
+	for _, entry := range entries {
+		name := strings.TrimSuffix(entry.Name(), ".yaml")
+		if strings.HasPrefix(name, "minecraft-") {
+			worlds = append(worlds, name)
+		}
+	}
+
+	return worlds, nil
+}
+
 func (r *Repo) DeleteMinecraftWorld(index int32) (string, error) {
 	r.mu.Lock()
 	defer r.mu.Unlock()

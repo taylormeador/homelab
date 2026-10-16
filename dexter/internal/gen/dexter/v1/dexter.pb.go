@@ -285,6 +285,86 @@ func (x *DeleteMinecraftWorldResponse) GetMessage() string {
 	return ""
 }
 
+type ListMinecraftWorldsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListMinecraftWorldsRequest) Reset() {
+	*x = ListMinecraftWorldsRequest{}
+	mi := &file_dexter_v1_dexter_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListMinecraftWorldsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListMinecraftWorldsRequest) ProtoMessage() {}
+
+func (x *ListMinecraftWorldsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_dexter_v1_dexter_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListMinecraftWorldsRequest.ProtoReflect.Descriptor instead.
+func (*ListMinecraftWorldsRequest) Descriptor() ([]byte, []int) {
+	return file_dexter_v1_dexter_proto_rawDescGZIP(), []int{6}
+}
+
+type ListMinecraftWorldsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Worlds        []string               `protobuf:"bytes,1,rep,name=worlds,proto3" json:"worlds,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListMinecraftWorldsResponse) Reset() {
+	*x = ListMinecraftWorldsResponse{}
+	mi := &file_dexter_v1_dexter_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListMinecraftWorldsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListMinecraftWorldsResponse) ProtoMessage() {}
+
+func (x *ListMinecraftWorldsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_dexter_v1_dexter_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListMinecraftWorldsResponse.ProtoReflect.Descriptor instead.
+func (*ListMinecraftWorldsResponse) Descriptor() ([]byte, []int) {
+	return file_dexter_v1_dexter_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *ListMinecraftWorldsResponse) GetWorlds() []string {
+	if x != nil {
+		return x.Worlds
+	}
+	return nil
+}
+
 var File_dexter_v1_dexter_proto protoreflect.FileDescriptor
 
 const file_dexter_v1_dexter_proto_rawDesc = "" +
@@ -302,11 +382,15 @@ const file_dexter_v1_dexter_proto_rawDesc = "" +
 	"\x1bDeleteMinecraftWorldRequest\x12\x14\n" +
 	"\x05index\x18\x01 \x01(\x05R\x05index\"8\n" +
 	"\x1cDeleteMinecraftWorldResponse\x12\x18\n" +
-	"\amessage\x18\x01 \x01(\tR\amessage2\x93\x02\n" +
+	"\amessage\x18\x01 \x01(\tR\amessage\"\x1c\n" +
+	"\x1aListMinecraftWorldsRequest\"5\n" +
+	"\x1bListMinecraftWorldsResponse\x12\x16\n" +
+	"\x06worlds\x18\x01 \x03(\tR\x06worlds2\xf9\x02\n" +
 	"\x06Dexter\x127\n" +
 	"\x04Ping\x12\x16.dexter.v1.PingRequest\x1a\x17.dexter.v1.PingResponse\x12g\n" +
 	"\x14CreateMinecraftWorld\x12&.dexter.v1.CreateMinecraftWorldRequest\x1a'.dexter.v1.CreateMinecraftWorldResponse\x12g\n" +
-	"\x14DeleteMinecraftWorld\x12&.dexter.v1.DeleteMinecraftWorldRequest\x1a'.dexter.v1.DeleteMinecraftWorldResponseB?Z=github.com/taylormeador/homelab/dexter/internal/gen/dexter/v1b\x06proto3"
+	"\x14DeleteMinecraftWorld\x12&.dexter.v1.DeleteMinecraftWorldRequest\x1a'.dexter.v1.DeleteMinecraftWorldResponse\x12d\n" +
+	"\x13ListMinecraftWorlds\x12%.dexter.v1.ListMinecraftWorldsRequest\x1a&.dexter.v1.ListMinecraftWorldsResponseB?Z=github.com/taylormeador/homelab/dexter/internal/gen/dexter/v1b\x06proto3"
 
 var (
 	file_dexter_v1_dexter_proto_rawDescOnce sync.Once
@@ -320,7 +404,7 @@ func file_dexter_v1_dexter_proto_rawDescGZIP() []byte {
 	return file_dexter_v1_dexter_proto_rawDescData
 }
 
-var file_dexter_v1_dexter_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_dexter_v1_dexter_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
 var file_dexter_v1_dexter_proto_goTypes = []any{
 	(*PingRequest)(nil),                  // 0: dexter.v1.PingRequest
 	(*PingResponse)(nil),                 // 1: dexter.v1.PingResponse
@@ -328,16 +412,20 @@ var file_dexter_v1_dexter_proto_goTypes = []any{
 	(*CreateMinecraftWorldResponse)(nil), // 3: dexter.v1.CreateMinecraftWorldResponse
 	(*DeleteMinecraftWorldRequest)(nil),  // 4: dexter.v1.DeleteMinecraftWorldRequest
 	(*DeleteMinecraftWorldResponse)(nil), // 5: dexter.v1.DeleteMinecraftWorldResponse
+	(*ListMinecraftWorldsRequest)(nil),   // 6: dexter.v1.ListMinecraftWorldsRequest
+	(*ListMinecraftWorldsResponse)(nil),  // 7: dexter.v1.ListMinecraftWorldsResponse
 }
 var file_dexter_v1_dexter_proto_depIdxs = []int32{
 	0, // 0: dexter.v1.Dexter.Ping:input_type -> dexter.v1.PingRequest
 	2, // 1: dexter.v1.Dexter.CreateMinecraftWorld:input_type -> dexter.v1.CreateMinecraftWorldRequest
 	4, // 2: dexter.v1.Dexter.DeleteMinecraftWorld:input_type -> dexter.v1.DeleteMinecraftWorldRequest
-	1, // 3: dexter.v1.Dexter.Ping:output_type -> dexter.v1.PingResponse
-	3, // 4: dexter.v1.Dexter.CreateMinecraftWorld:output_type -> dexter.v1.CreateMinecraftWorldResponse
-	5, // 5: dexter.v1.Dexter.DeleteMinecraftWorld:output_type -> dexter.v1.DeleteMinecraftWorldResponse
-	3, // [3:6] is the sub-list for method output_type
-	0, // [0:3] is the sub-list for method input_type
+	6, // 3: dexter.v1.Dexter.ListMinecraftWorlds:input_type -> dexter.v1.ListMinecraftWorldsRequest
+	1, // 4: dexter.v1.Dexter.Ping:output_type -> dexter.v1.PingResponse
+	3, // 5: dexter.v1.Dexter.CreateMinecraftWorld:output_type -> dexter.v1.CreateMinecraftWorldResponse
+	5, // 6: dexter.v1.Dexter.DeleteMinecraftWorld:output_type -> dexter.v1.DeleteMinecraftWorldResponse
+	7, // 7: dexter.v1.Dexter.ListMinecraftWorlds:output_type -> dexter.v1.ListMinecraftWorldsResponse
+	4, // [4:8] is the sub-list for method output_type
+	0, // [0:4] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -355,7 +443,7 @@ func file_dexter_v1_dexter_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_dexter_v1_dexter_proto_rawDesc), len(file_dexter_v1_dexter_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   6,
+			NumMessages:   8,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

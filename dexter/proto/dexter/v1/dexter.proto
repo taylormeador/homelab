@@ -8,6 +8,7 @@ service Dexter {
   rpc Ping(PingRequest) returns (PingResponse);
   rpc CreateMinecraftWorld(CreateMinecraftWorldRequest) returns (CreateMinecraftWorldResponse);
   rpc DeleteMinecraftWorld(DeleteMinecraftWorldRequest) returns (DeleteMinecraftWorldResponse);
+  rpc ListMinecraftWorlds(ListMinecraftWorldsRequest) returns (ListMinecraftWorldsResponse);
 }
 
 message PingRequest {
@@ -32,4 +33,10 @@ message DeleteMinecraftWorldRequest {
 
 message DeleteMinecraftWorldResponse {
   string message = 1;
+}
+
+message ListMinecraftWorldsRequest {}
+
+message ListMinecraftWorldsResponse {
+  repeated string worlds = 1;
 }

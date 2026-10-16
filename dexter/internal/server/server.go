@@ -34,6 +34,17 @@ func (s *Server) CreateMinecraftWorld(ctx context.Context, req *pb.CreateMinecra
 	}, nil
 }
 
+func (s *Server) ListMinecraftWorlds(ctx context.Context, req *pb.ListMinecraftWorldsRequest) (*pb.ListMinecraftWorldsResponse, error) {
+	worlds, err := s.r.ListMinecraftWorlds()
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.ListMinecraftWorldsResponse{
+		Worlds: worlds,
+	}, nil
+}
+
 func (s *Server) DeleteMinecraftWorld(ctx context.Context, req *pb.DeleteMinecraftWorldRequest) (*pb.DeleteMinecraftWorldResponse, error) {
 	worldName, err := s.r.DeleteMinecraftWorld(req.Index)
 	if err != nil {
