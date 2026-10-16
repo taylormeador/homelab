@@ -1,9 +1,10 @@
-package server
+package repo
 
 import (
 	"errors"
 	"fmt"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 
@@ -20,8 +21,9 @@ var (
 	ErrWorldExists  = status.Errorf(codes.AlreadyExists, "world at that index already exists")
 )
 
-func getNextWorldIndex() (int, error) {
-	entries, err := os.ReadDir("/tmp/homelab/k8s/minecraft/worlds/")
+func (r *Repo) getNextWorldIndex() (int, error) {
+	path := filepath.Join(r.directory, "/k8s/minecraft/worlds")
+	entries, err := os.ReadDir(path)
 	if err != nil {
 		return -1, status.Errorf(codes.Internal, "failed to read world files: %v", err)
 	}
@@ -50,13 +52,13 @@ type MinecraftWorldConfig struct {
 	ClusterIP string `yaml:"clusterIP"`
 }
 
-func createMinecraftYAML(index int) error {
+func (r *Repo) createMinecraftYAML(index int) error {
 	if index < minWorldIndex || index > maxWorldIndex {
 		return ErrInvalidIndex
 	}
 
 	worldName := fmt.Sprintf("minecraft-%d", index)
-	filePath := fmt.Sprintf("/tmp/homelab/k8s/minecraft/worlds/%s.yaml", worldName)
+	filePath := filepath.Join(r.directory, "k8s/minecraft/worlds", worldName+".yaml")
 
 	file, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0644)
 	if err != nil {
@@ -82,4 +84,32 @@ func createMinecraftYAML(index int) error {
 	}
 
 	return nil
+}
+
+func (r *Repo) CreateMinecraftWorld(index *int32) (string, error) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+
+	var i int
+	if index != nil {
+		i = int(*index)
+	} else {
+		var err error
+		i, err = r.getNextWorldIndex()
+		if err != nil {
+			return "", err
+		}
+	}
+
+	if err := r.createMinecraftYAML(i); err != nil {
+		return "", err
+	}
+
+	commitMessage := fmt.Sprintf("dexterd - create minecraft-%d", i)
+	if err := r.publishChanges(commitMessage); err != nil {
+		return "", err
+	}
+
+	worldName := fmt.Sprintf("minecraft-%d", i)
+	return worldName, nil
 }
