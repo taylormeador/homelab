@@ -42,7 +42,10 @@ func (r *Repo) authOptions() []client.Option {
 func (r *Repo) RefreshLocal() error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
+	return r.refreshLocal()
+}
 
+func (r *Repo) refreshLocal() error {
 	if err := os.RemoveAll(r.directory); err != nil {
 		return status.Errorf(codes.Internal, "failed to clean repo directory: %v", err)
 	}

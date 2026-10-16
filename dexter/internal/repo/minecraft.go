@@ -92,6 +92,10 @@ func (r *Repo) CreateMinecraftWorld(index *int32) (string, error) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
+	if err := r.refreshLocal(); err != nil {
+		return "", err
+	}
+
 	var i int
 	if index != nil {
 		i = int(*index)
@@ -117,12 +121,12 @@ func (r *Repo) CreateMinecraftWorld(index *int32) (string, error) {
 }
 
 func (r *Repo) DeleteMinecraftWorld(index int32) (string, error) {
-	if err := r.RefreshLocal(); err != nil {
-		return "", ErrFailedRefresh
-	}
-
 	r.mu.Lock()
 	defer r.mu.Unlock()
+
+	if err := r.refreshLocal(); err != nil {
+		return "", err
+	}
 
 	worldName := fmt.Sprintf("minecraft-%d", index)
 	path := filepath.Join(r.directory, "/k8s/minecraft/worlds/", worldName+".yaml")
