@@ -34,6 +34,28 @@ var createMinecraftCmd = &cobra.Command{
 	},
 }
 
+var deleteMinecraftCmd = &cobra.Command{
+	Use:   "minecraft [index]",
+	Short: "Delete a Minecraft server",
+	Args:  cobra.MinimumNArgs(1),
+	RunE: func(cmd *cobra.Command, args []string) error {
+		index, err := strconv.Atoi(args[0])
+		if err != nil {
+			return fmt.Errorf("index must be a number: %s", args[0])
+		}
+
+		req := pb.DeleteMinecraftWorldRequest{Index: int32(index)}
+		resp, err := client.DeleteMinecraftWorld(cmd.Context(), &req)
+		if err != nil {
+			return fmt.Errorf("failed to delete world: %v", err)
+		}
+
+		fmt.Println(resp.Message)
+		return nil
+	},
+}
+
 func init() {
 	createCmd.AddCommand(createMinecraftCmd)
+	deleteCmd.AddCommand(deleteMinecraftCmd)
 }

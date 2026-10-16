@@ -33,3 +33,14 @@ func (s *Server) CreateMinecraftWorld(ctx context.Context, req *pb.CreateMinecra
 		Message: fmt.Sprintf("created %s", worldName),
 	}, nil
 }
+
+func (s *Server) DeleteMinecraftWorld(ctx context.Context, req *pb.DeleteMinecraftWorldRequest) (*pb.DeleteMinecraftWorldResponse, error) {
+	worldName, err := s.r.DeleteMinecraftWorld(req.Index)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.DeleteMinecraftWorldResponse{
+		Message: fmt.Sprintf("deleted %s", worldName),
+	}, nil
+}

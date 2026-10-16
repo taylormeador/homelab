@@ -21,6 +21,7 @@ const _ = grpc.SupportPackageIsVersion9
 const (
 	Dexter_Ping_FullMethodName                 = "/dexter.v1.Dexter/Ping"
 	Dexter_CreateMinecraftWorld_FullMethodName = "/dexter.v1.Dexter/CreateMinecraftWorld"
+	Dexter_DeleteMinecraftWorld_FullMethodName = "/dexter.v1.Dexter/DeleteMinecraftWorld"
 )
 
 // DexterClient is the client API for Dexter service.
@@ -29,6 +30,7 @@ const (
 type DexterClient interface {
 	Ping(ctx context.Context, in *PingRequest, opts ...grpc.CallOption) (*PingResponse, error)
 	CreateMinecraftWorld(ctx context.Context, in *CreateMinecraftWorldRequest, opts ...grpc.CallOption) (*CreateMinecraftWorldResponse, error)
+	DeleteMinecraftWorld(ctx context.Context, in *DeleteMinecraftWorldRequest, opts ...grpc.CallOption) (*DeleteMinecraftWorldResponse, error)
 }
 
 type dexterClient struct {
@@ -59,12 +61,23 @@ func (c *dexterClient) CreateMinecraftWorld(ctx context.Context, in *CreateMinec
 	return out, nil
 }
 
+func (c *dexterClient) DeleteMinecraftWorld(ctx context.Context, in *DeleteMinecraftWorldRequest, opts ...grpc.CallOption) (*DeleteMinecraftWorldResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteMinecraftWorldResponse)
+	err := c.cc.Invoke(ctx, Dexter_DeleteMinecraftWorld_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // DexterServer is the server API for Dexter service.
 // All implementations must embed UnimplementedDexterServer
 // for forward compatibility.
 type DexterServer interface {
 	Ping(context.Context, *PingRequest) (*PingResponse, error)
 	CreateMinecraftWorld(context.Context, *CreateMinecraftWorldRequest) (*CreateMinecraftWorldResponse, error)
+	DeleteMinecraftWorld(context.Context, *DeleteMinecraftWorldRequest) (*DeleteMinecraftWorldResponse, error)
 	mustEmbedUnimplementedDexterServer()
 }
 
@@ -80,6 +93,9 @@ func (UnimplementedDexterServer) Ping(context.Context, *PingRequest) (*PingRespo
 }
 func (UnimplementedDexterServer) CreateMinecraftWorld(context.Context, *CreateMinecraftWorldRequest) (*CreateMinecraftWorldResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateMinecraftWorld not implemented")
+}
+func (UnimplementedDexterServer) DeleteMinecraftWorld(context.Context, *DeleteMinecraftWorldRequest) (*DeleteMinecraftWorldResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method DeleteMinecraftWorld not implemented")
 }
 func (UnimplementedDexterServer) mustEmbedUnimplementedDexterServer() {}
 func (UnimplementedDexterServer) testEmbeddedByValue()                {}
@@ -138,6 +154,24 @@ func _Dexter_CreateMinecraftWorld_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Dexter_DeleteMinecraftWorld_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteMinecraftWorldRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DexterServer).DeleteMinecraftWorld(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Dexter_DeleteMinecraftWorld_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DexterServer).DeleteMinecraftWorld(ctx, req.(*DeleteMinecraftWorldRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Dexter_ServiceDesc is the grpc.ServiceDesc for Dexter service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -152,6 +186,10 @@ var Dexter_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateMinecraftWorld",
 			Handler:    _Dexter_CreateMinecraftWorld_Handler,
+		},
+		{
+			MethodName: "DeleteMinecraftWorld",
+			Handler:    _Dexter_DeleteMinecraftWorld_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

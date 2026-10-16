@@ -17,8 +17,10 @@ const minWorldIndex = 0
 const maxWorldIndex = 9
 
 var (
-	ErrInvalidIndex = status.Errorf(codes.InvalidArgument, "world index must be between %d and %d", minWorldIndex, maxWorldIndex)
-	ErrWorldExists  = status.Errorf(codes.AlreadyExists, "world at that index already exists")
+	ErrInvalidIndex   = status.Errorf(codes.InvalidArgument, "world index must be between %d and %d", minWorldIndex, maxWorldIndex)
+	ErrWorldExists    = status.Errorf(codes.AlreadyExists, "world at that index already exists")
+	ErrWorldNotExists = status.Errorf(codes.NotFound, "world does not exist")
+	ErrFailedRefresh  = status.Errorf(codes.FailedPrecondition, "failed to refresh local repo")
 )
 
 func (r *Repo) getNextWorldIndex() (int, error) {
@@ -111,5 +113,32 @@ func (r *Repo) CreateMinecraftWorld(index *int32) (string, error) {
 	}
 
 	worldName := fmt.Sprintf("minecraft-%d", i)
+	return worldName, nil
+}
+
+func (r *Repo) DeleteMinecraftWorld(index int32) (string, error) {
+	if err := r.RefreshLocal(); err != nil {
+		return "", ErrFailedRefresh
+	}
+
+	r.mu.Lock()
+	defer r.mu.Unlock()
+
+	worldName := fmt.Sprintf("minecraft-%d", index)
+	path := filepath.Join(r.directory, "/k8s/minecraft/worlds/", worldName+".yaml")
+	err := os.Remove(path)
+	if err != nil {
+		if errors.Is(err, os.ErrNotExist) {
+			return "", ErrWorldNotExists
+		} else {
+			return "", status.Errorf(codes.Internal, "error deleting world: %v", err)
+		}
+	}
+
+	commitMessage := fmt.Sprintf("dexterd - delete %s", worldName)
+	if err := r.publishChanges(commitMessage); err != nil {
+		return "", status.Errorf(codes.Internal, "error pushing changes: %v", err)
+	}
+
 	return worldName, nil
 }
