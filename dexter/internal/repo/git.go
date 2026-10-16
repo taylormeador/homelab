@@ -10,6 +10,8 @@ import (
 	"github.com/go-git/go-git/v6/plumbing/client"
 	"github.com/go-git/go-git/v6/plumbing/object"
 	"github.com/go-git/go-git/v6/plumbing/transport/http"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type Repo struct {
@@ -41,9 +43,8 @@ func (r *Repo) RefreshLocal() error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
-	err := os.RemoveAll(r.directory)
-	if err != nil {
-		return err
+	if err := os.RemoveAll(r.directory); err != nil {
+		return status.Errorf(codes.Internal, "failed to clean repo directory: %v", err)
 	}
 
 	repo, err := git.PlainClone(r.directory, &git.CloneOptions{
@@ -52,18 +53,18 @@ func (r *Repo) RefreshLocal() error {
 		ClientOptions: r.authOptions(),
 	})
 	if err != nil {
-		return err
+		return status.Errorf(codes.Internal, "failed to clone repo: %v", err)
 	}
 	r.repo = repo
 
 	ref, err := repo.Head()
 	if err != nil {
-		return err
+		return status.Errorf(codes.Internal, "failed to get HEAD: %v", err)
 	}
 
 	commit, err := repo.CommitObject(ref.Hash())
 	if err != nil {
-		return err
+		return status.Errorf(codes.Internal, "failed to get commit: %v", err)
 	}
 
 	log.Printf("cloned repo and checked out commit %s: %s", commit.Hash, commit.Message)
@@ -74,11 +75,11 @@ func (r *Repo) RefreshLocal() error {
 func (r *Repo) publishChanges(commitMessage string) error {
 	w, err := r.repo.Worktree()
 	if err != nil {
-		return err
+		return status.Errorf(codes.Internal, "failed to get worktree: %v", err)
 	}
 
 	if _, err := w.Add("."); err != nil {
-		return err
+		return status.Errorf(codes.Internal, "failed to stage changes: %v", err)
 	}
 
 	_, err = w.Commit(commitMessage, &git.CommitOptions{
@@ -89,14 +90,13 @@ func (r *Repo) publishChanges(commitMessage string) error {
 		},
 	})
 	if err != nil {
-		return err
+		return status.Errorf(codes.Internal, "failed to commit: %v", err)
 	}
 
-	err = r.repo.Push(&git.PushOptions{
+	if err := r.repo.Push(&git.PushOptions{
 		ClientOptions: r.authOptions(),
-	})
-	if err != nil {
-		return err
+	}); err != nil {
+		return status.Errorf(codes.Internal, "failed to push: %v", err)
 	}
 
 	log.Printf("pushed: %s", commitMessage)
